@@ -47,9 +47,18 @@ const Profile = ({ route, navigation }) => {
                 <View style={styles.lowerView}>
                     <Text style={styles.userDetails}>City: {userInfo?.city} </Text>
                     <Text style={styles.userDetails}>Phone: {userInfo?.phoneNumber} </Text>
-                    <Text style={styles.userDetails}>Insurance Company: {userInfo?.insuranceCompany} </Text>
-                    <Text style={styles.userDetails}>Driver Licence: {userInfo?.driversLicenseNumber} </Text>
-                    <Text style={styles.userDetails}>Insurance Expiry Date: {userInfo?.insuranceExpiryDate} </Text>
+                    <Text style={styles.userDetails}>Insurance Company: {userInfo.insuranceCompany ? userInfo.insuranceCompany : 
+                        <TouchableOpacity style={{ alignItems: "center", marginTop: "auto" }}>
+                            <Text style={styles.verifyText}>Add</Text>
+                        </TouchableOpacity>} </Text>
+                    <Text style={styles.userDetails}>Driver Licence: {userInfo?.driversLicenseNumber  ? userInfo?.driversLicenseNumber : 
+                        <TouchableOpacity style={{ alignItems: "center", marginTop: "auto" }}>
+                            <Text style={styles.verifyText}>Add</Text>
+                        </TouchableOpacity>} </Text>
+                    <Text style={styles.userDetails}>Insurance Expiry Date: {userInfo?.insuranceExpiryDate  ? userInfo?.insuranceExpiryDate : 
+                        <TouchableOpacity style={{ alignItems: "center", marginTop: "auto" }}>
+                            <Text style={styles.verifyText}>Add</Text>
+                        </TouchableOpacity>} </Text>
 
                     {!currentUser?.emailVerified &&
                         <TouchableOpacity style={{ alignItems: "center", marginTop: "auto" }}>

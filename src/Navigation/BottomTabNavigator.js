@@ -1,20 +1,22 @@
-import React, { useEffect } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import React from "react";
+import { TouchableOpacity } from "react-native";
+import { TouchableRipple } from "react-native-paper";
 import { Dimensions } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import HomeScreen from "../Screens/Main/Home";
 import Settings from "../Screens/Main/Settings";
 import Chats from "../Screens/Main/Chats";
 import Details from "../Screens/Main/Details";
 import Notification from "../Screens/Main/Notification";
 import colors from "../Theme/Colors";
-import { FontAwesome, Entypo, Ionicons } from "../Constants";
+import { FontAwesome, Ionicons } from "../Constants";
 
-const { width, height } = Dimensions.get("window");
+const { height } = Dimensions.get("window");
 
 const BottomTabNavigator = ({ navigation }) => {
   const Tab = createBottomTabNavigator();
+  const route = useRoute();
 
   return (
     <Tab.Navigator
@@ -54,18 +56,30 @@ const BottomTabNavigator = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name="Details"
-        component={Details}
+        name="LocationFetchTab"
+        component={HomeScreen}
         options={{
-          tabPress: (e) => {
-            e.preventDefault();
-          },
+          // tabPress: (e) => {
+          //   e.preventDefault();
+          // },
           tabBarIcon: (props) => (
-            <TouchableOpacity activeOpacity={1} onPress={e => e.preventDefault()}>
-              <TouchableOpacity
-                onPress={(e) => {e.preventDefault()}}
+            <TouchableOpacity
+              style={{}}
+              activeOpacity={1}
+              onPress={(e) => {
+                e.preventDefault();
+                navigation.navigate("Home");
+                // console.log(route.name)
+              }}
+            >
+              <TouchableRipple
+                onPress={() => {
+                  navigation.navigate("Home");
+                }}
                 activeOpacity={1}
+                rippleColor="#fff"
                 style={{
+                  backgroundColor: "green",
                   height: 65,
                   width: 65,
                   borderRadius: 100,
@@ -80,7 +94,7 @@ const BottomTabNavigator = ({ navigation }) => {
                   color="#fff"
                   size={35}
                 />
-              </TouchableOpacity>
+              </TouchableRipple>
             </TouchableOpacity>
           ),
           tabBarLabel: "",

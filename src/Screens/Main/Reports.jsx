@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from
 import Header from "../../components/Header";
 import { Ionicons , MaterialCommunityIcons } from "../../Constants"
 import colors from "../../Theme/Colors";
+import Fonts from "../../Theme/Fonts";
 
 const { width, height } = Dimensions.get("window");
 

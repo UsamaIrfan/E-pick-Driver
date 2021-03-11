@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Alert, TextInput, Dimensions } from 'react-native';
 import MapView from 'react-native-maps';
+import { Marker } from 'react-native-maps';
 import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
 import * as Location from 'expo-location';
+import { useSelector, useDispatch } from "react-redux"
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { Ionicons, MaterialCommunityIcons, Entypo } from "../../Constants/index";
 import Fonts from '../../Theme/Fonts';
@@ -11,11 +13,15 @@ import Fonts from '../../Theme/Fonts';
 const { width, height } = Dimensions.get("window")
 const Home = () => {
 
-
+    const [Region, setRegion] = useState({
+        latitude: 25.1921465,
+        longitude: 66.5949955,
+        latitudeDelta: 0.04,
+        longitudeDelta: 0.05,
+    })
     const [location, setLocation] = useState(null);
+    const [Destination, setDestination] = useState({geometry: { location: { lat: 25.1921465, long: 66.5949955 } }})
     const [errorMsg, setErrorMsg] = useState(null);
-    const [Longitude, setLongitude] = useState(-122.4324);
-    const [Latitude, setLatitude] = useState(37.78825);
     const HomePlace = { description: "Home", geometry: { location: { lat: 25.1921465, long: 66.5949955 } } }
     const HomeCheck = { description: "Work", geometry: { location: { lat: 25.1921465, long: 66.5949955 } } }
 
@@ -48,12 +54,13 @@ const Home = () => {
                 { cancelable: false }
             );
         }
+        console.log("Loading..........")
     }
 
     useEffect(() => {
         console.log("Runnning...")
         load()
-        regionFrom(25.1921465, 66.5949955, 10)
+        // regionFrom(25.1921465, 66.5949955, 10)
     }, [])
 
     const regionFrom = (lat, lon, accuracy) => {
@@ -82,9 +89,7 @@ const Home = () => {
                 onPress={(data, details = null) => {
                     // 'details' is provided when fetchDetails = true
                     console.log(data, details);
-                    setLocation(data?.geometry?.location)
-                    setLongitude(data?.geometry?.location?.lng)
-                    setLatitude(data?.geometry?.location?.lat)
+                    setDestination(data, details);
                 }}
                 query={{
                     key: 'AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM',
@@ -140,14 +145,10 @@ const Home = () => {
                             </View>
                         </View>
                     </View>
-                    <MapView style={styles.map} initialRegion={
-                        // latitude: Latitude,
-                        // longitude: Longitude,
-                        // latitudeDelta: 0.0922,
-                        // longitudeDelta: 0.0421,
-                        regionFrom(25.1921465, 66.5949955, 10)
-                    }
-                    />
+                    <MapView style={styles.map}
+                    >
+                        <Marker coordinate={{latitude: Destination?.geometry.location.lat, longitude: Destination?.geometry.location.lat}} />
+                    </MapView>
                 </View>
             </View>
         </React.Fragment>

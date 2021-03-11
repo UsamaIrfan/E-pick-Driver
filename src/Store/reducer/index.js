@@ -1,9 +1,10 @@
 import { combineReducers, applyMiddleware } from 'redux';
 import Thunk from 'redux-thunk';
 import Auth from "./Auth"
-import SignUp from "./SignUp";
+import Location from "./Location";
 
 export default combineReducers({
   Auth: Auth,
-  SignUp: SignUp,
+  Location: Location,
+  // SignUp: SignUp,
 }) 

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef , useEffect } from 'react'
 import { StyleSheet, Text, View, Image, StatusBar, Dimensions, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
 import { Button as PaperButton } from 'react-native-paper';
 import colors from "../../Theme/Colors";
@@ -10,6 +10,7 @@ import { useDispatch, } from 'react-redux';
 import Toast from "react-native-simple-toast"
 import * as authActions from '../../Store/action/login';
 import Loader from "../../components/Loader";
+import * as signUpActions from "../../Store/action/login";
 
 const { height, width } = Dimensions.get("window")
 
@@ -21,13 +22,27 @@ export default function SignUp({ navigation }) {
 
     const dispatch = useDispatch()
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            getVehicleListing();
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
     const authenticateHandler = async () => {
         if (Email && Password !== '') {
             setIsLoading(true);
             await dispatch(authActions.LoginUser(Email, Password, navigation));
             setIsLoading(false)
-          }
-      };
+        }
+    };
+
+    const getVehicleListing = async () => {
+        setIsLoading(true);
+        await dispatch(signUpActions.getVehicles())
+        setIsLoading(false);
+    }
 
     const input2 = useRef();
 
@@ -49,7 +64,7 @@ export default function SignUp({ navigation }) {
                     </View>
                     <View style={styles.inputContainer}>
                         <MaterialIcons style={styles.inputIcon} s name="lock" size={18} color={colors.DarkGrey} />
-                        <TextInput onSubmitEditing={() => authenticateHandler()} style={styles.defaultInput} underlineColor={colors.DarkGreen} ref={input2} onChangeText={(text) => setPassword(text)} placeholder="Password" />
+                        <TextInput textContentType="password" secureTextEntry={true} onSubmitEditing={() => authenticateHandler()} style={styles.defaultInput} underlineColor={colors.DarkGreen} ref={input2} onChangeText={(text) => setPassword(text)} placeholder="Password" />
                     </View>
                     <TouchableOpacity activeOpacity={.6} onPress={() => navigation.push("ForgetPassword")} style={styles.forgetContainer}>
                         <Text style={{ ...styles.forgetText, color: colors.DarkGreen, }}>Forget Password?</Text>
