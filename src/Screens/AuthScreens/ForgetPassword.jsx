@@ -5,6 +5,7 @@ import colors from "../../Theme/Colors";
 import { TextInput as PaperInput } from 'react-native-paper';
 import { DefaultTheme } from "react-native-paper";
 import { FontAwesome, MaterialIcons, Entypo, Ionicons, AuthScreenLogo } from "../../Constants/index";
+import Fonts from "../../Theme/Fonts";
 
 // const theme = {
 //     ...DefaultTheme,
@@ -76,6 +77,7 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
         color: colors.DarkGrey,
         textTransform: "uppercase",
+        fontFamily: Fonts.bold,
     },
     heading: {
         marginBottom: 20
@@ -97,11 +99,13 @@ const styles = StyleSheet.create({
     forgetText: {
         marginLeft: "auto",
         marginTop: height * 0.01,
-        color: colors.LightGrey2
+        color: colors.LightGrey2,
+        fontFamily: Fonts.reg,
     },
     defaultInput: {
         flex: 1,
         fontSize: width * 0.04,
+        fontFamily: Fonts.reg,
     },
     inputIcon: {
         paddingRight: width * 0.02,
@@ -126,12 +130,14 @@ const styles = StyleSheet.create({
         backgroundColor: colors.DarkGrey
     },
     sepText: {
-        color: colors.DarkGrey
+        color: colors.DarkGrey,
+        fontFamily: Fonts.reg,
     },
     buttonText: {
         color: colors.White,
         fontSize: 18,
         textTransform: "none",
+        fontFamily: Fonts.reg,
     },
     buttonsContainer: {
         marginTop: height * 0.04,
@@ -145,5 +151,6 @@ const styles = StyleSheet.create({
         marginTop: height * 0.04,
         flexDirection: 'row',
         justifyContent: "center",
+        fontFamily: Fonts.reg,
     }
 })

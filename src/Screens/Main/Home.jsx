@@ -5,7 +5,8 @@ import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
 import * as Location from 'expo-location';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { Ionicons, MaterialCommunityIcons , Entypo } from "../../Constants/index";
+import { Ionicons, MaterialCommunityIcons, Entypo } from "../../Constants/index";
+import Fonts from '../../Theme/Fonts';
 
 const { width, height } = Dimensions.get("window")
 const Home = () => {
@@ -13,9 +14,10 @@ const Home = () => {
 
     const [location, setLocation] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [Longitude, setLongitude] = useState(0);
-    const [Latitude, setLatitude] = useState(0);
+    const [Longitude, setLongitude] = useState(-122.4324);
+    const [Latitude, setLatitude] = useState(37.78825);
     const HomePlace = { description: "Home", geometry: { location: { lat: 25.1921465, long: 66.5949955 } } }
+    const HomeCheck = { description: "Work", geometry: { location: { lat: 25.1921465, long: 66.5949955 } } }
 
     async function load() {
         setErrorMsg(null)
@@ -51,15 +53,23 @@ const Home = () => {
     useEffect(() => {
         console.log("Runnning...")
         load()
+        regionFrom(25.1921465, 66.5949955, 10)
     }, [])
 
+    const regionFrom = (lat, lon, accuracy) => {
+        const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
+        const circumference = (40075 / 360) * 1000;
 
-    // let text = 'Waiting..';
-    // if (errorMsg) {
-    //     text = errorMsg;
-    // } else if (location) {
-    //     text = JSON.stringify(location);
-    // }
+        const latDelta = accuracy * (1 / (Math.cos(lat) * circumference));
+        const lonDelta = (accuracy / oneDegreeOfLongitudeInMeters);
+
+        return {
+            latitude: lat,
+            longitude: lon,
+            latitudeDelta: Math.max(0, latDelta),
+            longitudeDelta: Math.max(0, lonDelta)
+        };
+    }
 
     const GooglePlacesInput = (props) => {
         return (
@@ -72,22 +82,35 @@ const Home = () => {
                 onPress={(data, details = null) => {
                     // 'details' is provided when fetchDetails = true
                     console.log(data, details);
+                    setLocation(data?.geometry?.location)
+                    setLongitude(data?.geometry?.location?.lng)
+                    setLatitude(data?.geometry?.location?.lat)
                 }}
                 query={{
-                    key: 'AIzaSyDBr78d3Y43SmJT3zvsrh6M8z5s0JU60aM',
+                    key: 'AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM',
                     language: 'en',
+                    types: "(cities)"
                 }}
+                enablePoweredByContainer={false}
                 style={{
-                    marginTop: 0,
-                    marginBottom: 0,
-                    marginRight: 0,
-                    marginLeft: 0,
+                    textInputContainer: {
+                        marginTop: 0,
+                        marginBottom: 0,
+                        marginLeft: 0,
+                        marginRight: 0,
+                    }
+                }}
+                GooglePlacesSearchQuery={{
+                    rankby: "distance",
+                }}
+                GooglePlacesDetailsQuery={{
+                    fields: ["formatted_address", "geometry"]
                 }}
                 renderDescription={row => row.description}
                 currentLocation={true}
                 currentLocationLabel="Current location"
                 nearbyPlacesAPI="GooglePlacesSearch"
-                predefinedPlaces={[HomePlace]}
+                predefinedPlaces={[HomePlace, HomeCheck]}
                 debounce={200}
                 google
             />
@@ -117,12 +140,13 @@ const Home = () => {
                             </View>
                         </View>
                     </View>
-                    <MapView style={styles.map} initialRegion={{
-                        latitude: 37.78825,
-                        longitude: -122.4324,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}
+                    <MapView style={styles.map} initialRegion={
+                        // latitude: Latitude,
+                        // longitude: Longitude,
+                        // latitudeDelta: 0.0922,
+                        // longitudeDelta: 0.0421,
+                        regionFrom(25.1921465, 66.5949955, 10)
+                    }
                     />
                 </View>
             </View>
@@ -154,6 +178,7 @@ const styles = StyleSheet.create({
         height: height * 0.2,
         justifyContent: "center",
         width: width,
+        fontFamily: Fonts.reg,
     },
     searchInput: {
         alignSelf: "flex-start",
@@ -186,4 +211,7 @@ const styles = StyleSheet.create({
         right: 10,
         top: 32,
     },
+    startText: {
+        fontFamily: Fonts.reg,
+    }
 })

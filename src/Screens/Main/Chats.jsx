@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from
 import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
 import { Ionicons, MaterialIcons, Octicons, Entypo } from "../../Constants"
+import Fonts from '../../Theme/Fonts';
 
 const { height, width } = Dimensions.get("window")
 
@@ -128,12 +129,12 @@ const Chats = ({navigation}) => {
                     </View>
                 </View>
                 <View style={{ justifyContent: "space-between" }} >
-                    <Text style={{ color: colors.DarkGreen, fontWeight: "bold" }}>{item.PhoneNumber}</Text>
-                    <Text>{item.lastMessage}</Text>
+                    <Text style={{ color: colors.DarkGreen, fontWeight: "bold" , fontFamily: Fonts.reg }}>{item.PhoneNumber}</Text>
+                    <Text style={{fontFamily: Fonts.reg}}>{item.lastMessage}</Text>
                 </View>
             </View>
             <View style={{ alignItems: "center" }}>
-                <Text style={{ marginBottom: "7%", color: colors.DarkGreen }} >{item.lastSeen}</Text>
+                <Text style={{ marginBottom: "7%", color: colors.DarkGreen, fontFamily: Fonts.reg }} >{item.lastSeen}</Text>
                 {!item.read ? <MaterialIcons name="error" size={18} color={colors.DarkGreen} /> : <MaterialIcons name="done" size={18} color={colors.DarkGreen} />}
             </View>
         </TouchableOpacity>
@@ -190,6 +191,7 @@ const styles = StyleSheet.create({
     headerText: {
         color: colors.White,
         fontSize: width * 0.05,
+        fontFamily: Fonts.reg,
     },
     headerLeft: {
         width: "20%",

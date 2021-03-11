@@ -20,6 +20,7 @@ const BottomTabNavigator = ({ navigation }) => {
     <Tab.Navigator
       initialRouteName="Home"
       tabBarOptions={{
+        keyboardHidesTabBar: true,
         showLabel: false,
         activeTintColor: colors.DarkGreen,
         inactiveTintColor: colors.DarkGrey,

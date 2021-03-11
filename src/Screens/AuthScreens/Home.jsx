@@ -1,16 +1,36 @@
-import React from "react";
-import { Text, View, StyleSheet, Dimensions, Image, Button, TouchableOpacity , StatusBar } from "react-native";
-import { Button as PaperButton } from 'react-native-paper';
-import { color } from "react-native-reanimated";
+import React, {useEffect, useState} from "react";
+import { Text, View, StyleSheet, Dimensions, Image, Button, TouchableOpacity, StatusBar } from "react-native";
 import colors from "../../Theme/Colors";
+import Fonts from "../../Theme/Fonts";
+import Loader from "../../components/Loader";
+import * as signUpActions from "../../Store/action/login";
+import {useSelector, useDispatch} from "react-redux";
 
 const { height, width } = Dimensions.get("window")
 
+
 const Home = ({ navigation }) => {
+
+  const dispatch = useDispatch()
+  const [IsLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getVehicleListing();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const getVehicleListing = async () => {
+    setIsLoading(true);
+    await dispatch(signUpActions.getVehicles())
+    setIsLoading(false);
+  }
   return (
     <>
       <View style={styles.imageContainer}>
-      <StatusBar backgroundColor={colors.DarkGreen} />
+        <StatusBar backgroundColor={colors.DarkGreen} />
         <Image
           source={{
             uri:
@@ -22,7 +42,7 @@ const Home = ({ navigation }) => {
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image
-            source={require("../../../assets/adaptive-icon.png")}
+            source={require("../../../assets/textIcon.png")}
             style={styles.logoImage}
           />
         </View>
@@ -34,6 +54,7 @@ const Home = ({ navigation }) => {
             <Text style={styles.buttonCapText}>Become A Captain</Text>
           </TouchableOpacity>
         </View>
+        {IsLoading && <Loader />}
       </View>
     </>
   );
@@ -59,8 +80,8 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   logoImage: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 85,
   },
   buttonsContainer: {
     flex: 1,
@@ -89,6 +110,7 @@ const styles = StyleSheet.create({
     color: colors.White,
     fontSize: 18,
     // textTransform: "none",
+    fontFamily: Fonts.reg,
   },
   buttonCaptain: {
     height: height * 0.06,
@@ -102,6 +124,7 @@ const styles = StyleSheet.create({
   buttonCapText: {
     color: colors.White,
     fontSize: 18,
+    fontFamily: Fonts.reg,
   },
 });
 

@@ -17,6 +17,5 @@ const WidthPer = (Percentage) => {
     return width - (( Percentage / 100) * width )  
 }
 
-
 export { width, height, HeightPer, WidthPer, P30, P5, P24,P20 }
 

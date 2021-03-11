@@ -3,10 +3,11 @@ import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from
 import Header from "../../components/Header";
 import { Ionicons } from "../../Constants"
 import colors from "../../Theme/Colors";
+import Fonts from '../../Theme/Fonts';
 
 const { width, height } = Dimensions.get("window");
 
-const Notification = ({ navigation }) => {
+const Documents = ({ navigation }) => {
 
     const DATA = [
         {
@@ -61,7 +62,7 @@ const Notification = ({ navigation }) => {
                 {DATA.map((item, i) => (
                     <TouchableOpacity onPress={() => navigation.navigate("DocInfo", { item })} activeOpacity={0.5} key={i} style={styles.listItem}>
                         <Ionicons style={{ marginRight: width * 0.02, }} name="document-text-sharp" size={40} color={colors.LightGrey} />
-                        <Text style={{ fontSize: width * 0.04, }}>{item.name}</Text>
+                        <Text style={{ fontSize: width * 0.04, fontFamily: Fonts.reg }}>{item.name}</Text>
                     </TouchableOpacity>
                 ))}
             </ScrollView>
@@ -69,7 +70,7 @@ const Notification = ({ navigation }) => {
     )
 }
 
-export default Notification
+export default Documents
 
 const styles = StyleSheet.create({
     listContainer: {

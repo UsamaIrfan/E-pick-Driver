@@ -1,13 +1,15 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import BottomTabNavigator from "../../Navigation/BottomTabNavigator"; 
 import DrawerNavigation from "../../Navigation/DrawerNavigator";
-
-const Index = () => {
-    return (   
+const Main = () => {
+    return (
+        <>
         <DrawerNavigation />
+        </>
     )
 }
 
-export default Index;
+export default Main
 
 const styles = StyleSheet.create({})

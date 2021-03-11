@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity , Shar
 import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
 import { Ionicons, MaterialIcons, Entypo, FontAwesome5 } from "../../Constants"
+import Fonts from '../../Theme/Fonts';
 
 const { height, width } = Dimensions.get("window")
 
@@ -50,7 +51,7 @@ const DocInfo = ({ route, navigation }) => {
                         <Text style={styles.titleText}>Document</Text>
                     </View>
                     <ScrollView style={styles.descContainer}>
-                        <Text style={{lineHeight: 20}}>{item.description}</Text>
+                        <Text style={{lineHeight: 20, fontFamily: Fonts.reg}}>{item.description}</Text>
                     </ScrollView>
                 </View>
             </View>
@@ -89,6 +90,7 @@ const styles = StyleSheet.create({
     headerText: {
         color: colors.White,
         fontSize: width * 0.05,
+        fontFamily: Fonts.reg,
     },
     headerLeft: {
         width: "20%",
@@ -118,7 +120,8 @@ const styles = StyleSheet.create({
     titleText: {
         fontSize: width * 0.05,
         color: colors.DarkGrey,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        fontFamily: Fonts.bold
     },
     descContainer: {
         height: height * 0.5,

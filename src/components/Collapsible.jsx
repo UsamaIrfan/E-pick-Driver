@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
 import { MaterialCommunityIcons, MaterialIcons } from "../Constants"
 import colors from "../Theme/Colors";
+import Fonts from '../Theme/Fonts';
 
 const { width, height } = Dimensions.get("window");
 
@@ -12,16 +13,16 @@ const Collapsible = ({ item }) => {
     return (
         <View style={styles.listContainer}>
             <View style={styles.list}>
-                <View style={{ ...styles.listItem, justifyContent: "space-between" }}>
+                <View style={{ ...styles.listItem, justifyContent: "space-between", marginBottom: "auto" }}>
                     <Text style={{...styles.title, backgroundColor: !item.read ? colors.LightGrey : colors.DarkGreen}}>{item.name}</Text>
                     <MaterialIcons name="delete" size={20} color={colors.LightGrey} />
                 </View>
                 <TouchableOpacity activeOpacity={0.5} style={{ ...styles.desc }}>
                     <Text>{item.description}</Text>
                 </TouchableOpacity>
-                <View style={styles.listItem}>
+                <View style={{...styles.listItem, marginBottom: "auto"}}>
                     <TouchableOpacity style={styles.readMore} activeOpacity={0.8} onPress={() => setReadMoreToggle(!ReadMoreToggle)} >
-                        <Text>Read More.</Text>
+                        <Text style={{fontFamily: Fonts.reg}}>Read More.</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -40,7 +41,8 @@ const styles = StyleSheet.create({
         zIndex: 5,
     },
     list: {
-        height: height * 0.13,
+        height: height * 0.12,
+        justifyContent: "center",
         overflow: "hidden",
         backgroundColor: colors.White,
         marginHorizontal: width * 0.05,
@@ -56,12 +58,14 @@ const styles = StyleSheet.create({
         backgroundColor: colors.DarkGreen,
         color: colors.White,
         padding: 4,
+        fontFamily: Fonts.bold,
     },
     desc: {
         marginTop: height * 0.005,
         maxHeight: height * 0.025,
         overflow: "hidden",
         marginLeft: width * 0.02,
+        fontFamily: Fonts.reg
     },
     readMore: {
         marginLeft: 'auto',

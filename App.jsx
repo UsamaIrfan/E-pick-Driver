@@ -7,15 +7,30 @@ import { Button as PaperButton } from 'react-native-paper';
 import Navigator from "./src/Navigation/StackNavigator";
 import { Provider } from "react-redux";
 import store from "./src/Store";
+import AppLoading from 'expo-app-loading';
+import { useFonts } from 'expo-font';
 
 const { height, width } = Dimensions.get("window")
 
 function App() {
-  return (
-    <Provider store={store}>
-      <Navigator /> 
-    </Provider>
-  );
+  let [fontsLoaded] = useFonts({
+    "Lato-Black": require("./assets/fonts/Lato-Black.ttf"),
+    "Lato-Bold": require("./assets/fonts/Lato-Bold.ttf"),
+    "Lato-Italic": require("./assets/fonts/Lato-Italic.ttf"),
+    "Lato-Light": require("./assets/fonts/Lato-Light.ttf"),
+    "Lato-Regular": require("./assets/fonts/Lato-Regular.ttf"),
+    "Lato-BoldItalic": require("./assets/fonts/Lato-BoldItalic.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  } else {
+    return (
+      <Provider store={store}>
+        <Navigator />
+      </Provider>
+    );
+  }
 }
 
 // const mapStateToProps = (state) => ({
@@ -34,7 +49,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
-    backgroundColor: colors.DarkGreen    
+    backgroundColor: colors.DarkGreen
   },
   container: {
     // backgroundColor: colors.DarkGreen,

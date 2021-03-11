@@ -1,33 +1,36 @@
 import React, { useState, useRef } from 'react'
-import { StyleSheet, Text, View, Image, StatusBar, Dimensions, TouchableOpacity, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, View, Image, StatusBar, Dimensions, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
 import { Button as PaperButton } from 'react-native-paper';
 import colors from "../../Theme/Colors";
 import { TextInput as PaperInput } from 'react-native-paper';
 import { DefaultTheme } from "react-native-paper";
 import { FontAwesome, MaterialIcons, Entypo, Ionicons, AuthScreenLogo } from "../../Constants/index";
+import Fonts from '../../Theme/Fonts';
+import { useDispatch, } from 'react-redux';
+import Toast from "react-native-simple-toast"
+import * as authActions from '../../Store/action/login';
+import Loader from "../../components/Loader";
 
-// const theme = {
-//     ...DefaultTheme,
-//     roundness: 2,
-//     colors: {
-//         ...DefaultTheme.colors,
-//         primary: '#3498db',
-//         accent: '#f1c40f',
-//     }
-// };
 const { height, width } = Dimensions.get("window")
 
 export default function SignUp({ navigation }) {
 
+    const [Email, setEmail] = useState("");
+    const [Password, setPassword] = useState("");
+    const [IsLoading, setIsLoading] = useState(false);
+
+    const dispatch = useDispatch()
+
+    const authenticateHandler = async () => {
+        if (Email && Password !== '') {
+            setIsLoading(true);
+            await dispatch(authActions.LoginUser(Email, Password, navigation));
+            setIsLoading(false)
+          }
+      };
 
     const input2 = useRef();
 
-    const [Email, setEmail] = useState("");
-    const [Password, setPassword] = useState("");
-
-    const loginValidate = () => {
-        navigation.navigate("MapMain")
-    }
 
     return (
         <View style={styles.container}>
@@ -46,14 +49,14 @@ export default function SignUp({ navigation }) {
                     </View>
                     <View style={styles.inputContainer}>
                         <MaterialIcons style={styles.inputIcon} s name="lock" size={18} color={colors.DarkGrey} />
-                        <TextInput onSubmitEditing={() => loginValidate()} style={styles.defaultInput} underlineColor={colors.DarkGreen} ref={input2} onChangeText={(text) => setPassword(text)} placeholder="Password" />
+                        <TextInput onSubmitEditing={() => authenticateHandler()} style={styles.defaultInput} underlineColor={colors.DarkGreen} ref={input2} onChangeText={(text) => setPassword(text)} placeholder="Password" />
                     </View>
                     <TouchableOpacity activeOpacity={.6} onPress={() => navigation.push("ForgetPassword")} style={styles.forgetContainer}>
                         <Text style={{ ...styles.forgetText, color: colors.DarkGreen, }}>Forget Password?</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.buttonsContainer}>
-                    <TouchableOpacity activeOpacity={.6} onPress={() => loginValidate()} style={{ ...styles.buttonLogin }}>
+                    <TouchableOpacity activeOpacity={.6} onPress={() => authenticateHandler()} style={{ ...styles.buttonLogin }}>
                         <Text style={{ ...styles.buttonText }}>Log In</Text>
                     </TouchableOpacity>
                     <View style={styles.sepLineContainer}>
@@ -69,7 +72,7 @@ export default function SignUp({ navigation }) {
                     </View>
                 </View>
             </View>
-
+            {IsLoading && <Loader />}
         </View>
     )
 }
@@ -98,6 +101,7 @@ const styles = StyleSheet.create({
         textDecorationLine: "underline",
         color: colors.DarkGrey,
         textTransform: "uppercase",
+        fontFamily: Fonts.bold,
     },
     heading: {
         marginBottom: 20
@@ -105,6 +109,7 @@ const styles = StyleSheet.create({
 
     inputs: {
         backgroundColor: "transparent",
+        fontFamily: Fonts.bold,
         height: height * 0.08,
     },
     inputContainer: {
@@ -124,6 +129,7 @@ const styles = StyleSheet.create({
     defaultInput: {
         flex: 1,
         fontSize: width * 0.04,
+        fontFamily: Fonts.reg,
     },
     inputIcon: {
         paddingRight: width * 0.02,
@@ -148,12 +154,14 @@ const styles = StyleSheet.create({
         backgroundColor: colors.DarkGrey
     },
     sepText: {
-        color: colors.DarkGrey
+        color: colors.DarkGrey,
+        fontFamily: Fonts.reg,
     },
     buttonText: {
         color: colors.White,
         fontSize: 18,
         textTransform: "none",
+        fontFamily: Fonts.reg,
     },
     buttonsContainer: {
         flex: 1,
@@ -166,5 +174,9 @@ const styles = StyleSheet.create({
     footerLinks: {
         flexDirection: 'row',
         justifyContent: "center",
+        fontFamily: Fonts.reg,
+    },
+    footerText: {
+        fontFamily: Fonts.reg,
     }
 })
