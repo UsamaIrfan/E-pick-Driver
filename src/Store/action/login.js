@@ -1,0 +1,158 @@
+import {
+  LOGIN,
+  LOGOUT,
+  AUTHENTICATE,
+  SIGNUP,
+  GET_VEHICLES,
+  GET_PROFILE,
+} from "../actionTypes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-simple-toast";
+import { Api } from "../server";
+import axios from "axios";
+
+// Demo Token Creation
+const token = "1234567890";
+
+export const LoginUser = (email, password, navigation) => {
+  var postData = { email: email, password: password };
+
+  return async (dispatch) => {
+    await axios
+      .post(`${Api}/api/driver-login?languageId=1`, postData, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log(response.data);
+        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+        if (response.data.success == true) {
+          dispatch({
+            type: LOGIN,
+            Login: response.data,
+          });
+          navigation.navigate("MapMain");
+          saveDataToStorage({ ...response.data, token: token });
+        }
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
+  };
+};
+
+export const LogoutFunc = (userId, navigation) => {
+  return async (dispatch) => {
+    axios
+      .post(
+        `${Api}/api/driver-logout/${userId}?languageId=1`,
+        {},
+        {
+          headers: { "Content-type": "application/json" },
+        }
+      )
+      .then((res) => {
+        dispatch({ type: LOGOUT });
+        AsyncStorage.removeItem("userData");
+        navigation.navigate("Login");
+        Toast.showWithGravity("Logged Out", Toast.SHORT, Toast.BOTTOM);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+};
+
+export const SignUpUser = (
+  email,
+  password,
+  firstName,
+  lastName,
+  phone,
+  vehicleId,
+  navigation
+) => {
+  var postData = {
+    email: email,
+    password: password,
+    firstName: firstName,
+    lastName: lastName,
+    phoneNumber: phone,
+    vehicleId: vehicleId,
+  };
+
+  return async (dispatch) => {
+    await axios
+      .post(`${Api}/api/register-driver?languageId=1`, postData, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log(response.data);
+        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.BOTTOM);
+        if (response.data.success == true) {
+          dispatch({
+            type: SIGNUP,
+            Login: response.data,
+          });
+          navigation.navigate("Login");
+        } else {
+          // Toast.showWithGravity("Sign Up failed", Toast.SHORT, Toast.TOP);
+        }
+        // navigation.navigate("MapMain");
+      })
+      .catch((error) => {
+        Toast.showWithGravity("Login failed", Toast.SHORT, Toast.TOP);
+        alert("error", error.response);
+      });
+  };
+};
+
+export const getVehicles = () => {
+  return async (dispatch) => {
+    await axios
+      .get(`${Api}/api/get-all-vehicles?pageSize=2147483647`, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log(response.data.data);
+        dispatch({
+          type: GET_VEHICLES,
+          Vehicles: response.data.data,
+        });
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
+  };
+};
+
+export const getUserInfo = (userId) => {
+  return async (dispatch) => {
+    await axios
+      .get(`${Api}/api/get-driver-profile/${userId}?languageId=1`, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log(response.data);
+        dispatch({
+          type: GET_PROFILE,
+          userInfo: response.data,
+        });
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
+  };
+};
+
+export const Authenticate = (resData) => {
+  return async (dispatch) => {
+    dispatch({
+      type: AUTHENTICATE,
+      Login: resData,
+    });
+  };
+};
+
+const saveDataToStorage = async (userData) => {
+  await AsyncStorage.setItem("userData", JSON.stringify(userData));
+};
