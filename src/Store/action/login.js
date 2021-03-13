@@ -5,6 +5,7 @@ import {
   SIGNUP,
   GET_VEHICLES,
   GET_PROFILE,
+  VERIFICATION_CODE,
 } from "../actionTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-simple-toast";
@@ -150,6 +151,80 @@ export const Authenticate = (resData) => {
       type: AUTHENTICATE,
       Login: resData,
     });
+  };
+};
+
+export const changePassword = (userId, oldPassword, newPassword) => {
+  var postData = {
+    userId: userId,
+    oldPassword: oldPassword,
+    newPassword: newPassword,
+  };
+
+  return async (dispatch) => {
+    await axios
+      .post(`${Api}/api/change-password?languageId=1`, postData, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log(response.data);
+        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+        if (response.data.success == true) {
+          console.log("success");
+        }
+        // navigation.navigate("MapMain");
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
+  };
+};
+
+export const getForgetCode = (emailOrPhone, navigation) => {
+  var postData = { emailOrPhone: emailOrPhone };
+
+  return async (dispatch) => {
+    await axios
+      .post(`${Api}/api/get-forget-password-code?languageId=1`, postData, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.success == true) {
+          dispatch({
+            type: VERIFICATION_CODE,
+            code: response.data.verificationCode,
+          });
+          Toast.showWithGravity("Email Sent", Toast.SHORT, Toast.TOP);
+          navigation.navigate("EnterForgetCode");
+        }
+        // navigation.navigate("MapMain");
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
+  };
+};
+
+export const forgetPasword = (emailOrPhone, newPassword, navigation) => {
+  var postData = { emailOrPhone: emailOrPhone , newPassword: newPassword};
+
+  return async (dispatch) => {
+    await axios
+      .post(`${Api}/api/forget-password?languageId=1`, postData, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log(response.data);
+        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+        if (response.data.success == true) {
+          navigation.navigate("Login");
+        }
+        // navigation.navigate("MapMain");
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
   };
 };
 

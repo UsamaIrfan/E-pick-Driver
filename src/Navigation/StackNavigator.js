@@ -5,7 +5,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import SignUp from "../Screens/AuthScreens/SignUp";
 import Login from "../Screens/AuthScreens/Login";
 import ForgetPassword from "../Screens/AuthScreens/ForgetPassword";
+import EnterForgetCode from "../Screens/AuthScreens/EnterForgetCode";
 import MapMain from "../Screens/Main/Main";
+import ChangePasswordAuth from "../Screens/AuthScreens/ChangePasswordAuth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch } from "react-redux";
 import { StatusBar, View, Dimensions, Text } from "react-native";
@@ -172,6 +174,8 @@ function MyStack() {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
           <Stack.Screen name="MapMain" component={MapMain} />
+          <Stack.Screen name="EnterForgetCode" component={EnterForgetCode} />
+          <Stack.Screen name="ChangePasswordAuth" component={ChangePasswordAuth} />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -191,6 +195,8 @@ function MyStack() {
           <Stack.Screen name="Login" component={Login} />
           <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
           <Stack.Screen name="MapMain" component={MapMain} />
+          <Stack.Screen name="ChangePasswordAuth" component={ChangePasswordAuth} />
+          <Stack.Screen name="EnterForgetCode" component={EnterForgetCode} />
         </Stack.Navigator>
       </NavigationContainer>
     );

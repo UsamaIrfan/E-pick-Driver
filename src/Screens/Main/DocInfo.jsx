@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity , Share } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, Share } from 'react-native'
 import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
 import { Ionicons, MaterialIcons, Entypo, FontAwesome5 } from "../../Constants"
@@ -14,16 +14,16 @@ const DocInfo = ({ route, navigation }) => {
     const shareMessage = (path, title) => {
         // //Here is the Share API
         Share.share({
-          message: path.toString(),
-          url: path,
+            message: path.toString(),
+            url: path,
         })
-          //after successful share return result
-          .then((result) => console.log(result))
-          //If any thing goes wrong it comes here
-          .catch((errorMsg) => console.log(errorMsg));
-      };
+            //after successful share return result
+            .then((result) => console.log(result))
+            //If any thing goes wrong it comes here
+            .catch((errorMsg) => console.log(errorMsg));
+    };
 
-    const ChatHeader = () => (
+    const DocHeader = () => (
         <View style={styles.headerContainer}>
             <TouchableOpacity onPress={() => navigation.toggleDrawer()} activeOpacity={0.5} style={styles.headerLeft}>
                 <MaterialIcons name="menu" size={30} color={colors.White} />
@@ -44,14 +44,14 @@ const DocInfo = ({ route, navigation }) => {
             <Header name={"Documents"} icon={
                 <Ionicons name="document-text-sharp" size={24} color={colors.White} />
             } />
-            <ChatHeader />
+            <DocHeader />
             <View style={styles.scrollView}>
                 <View style={styles.docContainer}>
                     <View style={styles.docTitle}>
                         <Text style={styles.titleText}>Document</Text>
                     </View>
                     <ScrollView style={styles.descContainer}>
-                        <Text style={{lineHeight: 20, fontFamily: Fonts.reg}}>{item.description}</Text>
+                        <Text style={{ lineHeight: 20, fontFamily: Fonts.reg }}>{item.description}</Text>
                     </ScrollView>
                 </View>
             </View>
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
         height: height * 0.75,
     },
     docTitle: {
-        paddingTop: height * 0.02, 
+        paddingTop: height * 0.02,
         paddingBottom: height * 0.05,
     },
     titleText: {

@@ -1,50 +1,68 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useRef, useState } from 'react'
-import { StyleSheet, Text, View, TextInput, Dimensions , TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import Header from "../../components/Header";
+import Loader from "../../components/Loader";
+import { useSelector, useDispatch } from "react-redux"
 import { MaterialIcons, Entypo } from "../../Constants"
 import colors from "../../Theme/Colors";
+import { changePassword } from "../../Store/action/login";
 
-const { height, width } = Dimensions.get("window")
+const { height, width } = Dimensions.get("window");
 
-const ChangePassword = ({navigation}) => {
+const ChangePassword = ({ navigation }) => {
 
     const [OldPassword, setOldPassword] = useState("")
     const [NewPassword, setNewPassword] = useState("")
     const [RePassword, setRePassword] = useState("")
+    const [IsLoading, setIsLoading] = useState(false)
 
     const input2 = useRef();
     const input3 = useRef();
 
+    const dispatch = useDispatch()
+
+    const userId = useSelector(state => state.Auth.Login.userId)
+
+    const passwordChangehandler = async (userId, oldPass, newPass, confirmPass) => {
+        if (oldPass != "" && newPass != oldPass && newPass != "" && newPass == confirmPass) {
+            setIsLoading(true)
+            await dispatch(changePassword(userId, oldPass, newPass))
+            setIsLoading(false)
+        }
+
+    }
+
     return (
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
             <Header name="Reset Password" icon={<MaterialIcons name="lock" size={24} color={colors.White} />} />
 
             <View style={styles.inputFieldContainer}>
                 <View style={styles.inputContainer}>
                     <MaterialIcons style={styles.inputIcon} name="lock" size={18} color={colors.DarkGrey} />
-                    <TextInput returnKeyType="next" onSubmitEditing={() => input2.current.focus()} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setOldPassword(text)} placeholder="Old Password" />
+                    <TextInput secureTextEntry={true} returnKeyType="next" onSubmitEditing={() => input2.current.focus()} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setOldPassword(text)} placeholder="Old Password" />
                 </View>
                 <View style={styles.inputContainer}>
                     <MaterialIcons style={styles.inputIcon} name="lock" size={18} color={colors.DarkGrey} />
-                    <TextInput returnKeyType="next" onSubmitEditing={() => input3.current.focus()} ref={input2} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setNewPassword(text)} placeholder="New Password" />
+                    <TextInput secureTextEntry={true} returnKeyType="next" onSubmitEditing={() => input3.current.focus()} ref={input2} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setNewPassword(text)} placeholder="New Password" />
                 </View>
                 <View style={styles.inputContainer}>
                     <MaterialIcons style={styles.inputIcon} name="lock" size={18} color={colors.DarkGrey} />
-                    <TextInput style={styles.defaultInput} onSubmitEditing={() => navigation.navigate("TabNavigator")} underlineColor={colors.DarkGreen} ref={input3} onChangeText={(text) => setRePassword(text)} placeholder="Confirm Password" />
+                    <TextInput secureTextEntry={true} style={styles.defaultInput} onSubmitEditing={() => navigation.navigate("TabNavigator")} underlineColor={colors.DarkGreen} ref={input3} onChangeText={(text) => setRePassword(text)} placeholder="Confirm Password" />
                 </View>
-                <TouchableOpacity onPress={() => navigation.navigate("TabNavigator")} activeOpacity={0.5} style={styles.buttonLogin}>
+                <TouchableOpacity onPress={() => passwordChangehandler(userId, OldPassword, NewPassword, RePassword)} activeOpacity={0.5} style={styles.buttonLogin}>
                     <Text style={styles.buttonText}>Reset Password</Text>
                 </TouchableOpacity>
             </View>
-
-        </View>
+            {IsLoading && <Loader />}
+        </KeyboardAvoidingView>
     )
 }
 
 export default ChangePassword
 
 const styles = StyleSheet.create({
+    container: { flex: 1, },
     inputContainer: {
         borderBottomColor: colors.DarkGreen,
         borderBottomWidth: 2,
@@ -56,7 +74,7 @@ const styles = StyleSheet.create({
     },
     inputFieldContainer: {
         paddingHorizontal: width * 0.05,
-        height: height * 0.9,
+        flex: 1,
         backgroundColor: colors.BackgroundGrey,
         justifyContent: "center"
     },

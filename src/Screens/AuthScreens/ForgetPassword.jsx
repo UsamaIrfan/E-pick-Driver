@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react'
 import { StyleSheet, Text, View, Image, StatusBar, Dimensions, TouchableOpacity, TextInput, Button } from 'react-native'
-import { Button as PaperButton } from 'react-native-paper';
 import colors from "../../Theme/Colors";
-import { TextInput as PaperInput } from 'react-native-paper';
-import { DefaultTheme } from "react-native-paper";
 import { FontAwesome, MaterialIcons, Entypo, Ionicons, AuthScreenLogo } from "../../Constants/index";
 import Fonts from "../../Theme/Fonts";
+import { useSelector, useDispatch } from "react-redux"
+import { getForgetCode } from "../../Store/action/login";
+import Loader from "../../components/Loader";
 
 // const theme = {
 //     ...DefaultTheme,
@@ -18,13 +18,27 @@ import Fonts from "../../Theme/Fonts";
 // };
 const { height, width } = Dimensions.get("window")
 
-export default function SignUp() {
-
+export default function ForgetPassword({ navigation }) {
 
     const input2 = useRef();
 
     const [Email, setEmail] = useState("");
-    const [Password, setPassword] = useState("");
+
+    const [IsLoading, setIsLoading] = useState(false)
+
+    const [verCode, setverCode] = useState(null)
+
+    const dispatch = useDispatch()
+
+    const forgetPasswordHandler = async (email) => {
+        if (email != "") {
+            setIsLoading(true)
+            await dispatch(getForgetCode(email, navigation))
+            setIsLoading(false)
+        }
+    }
+
+    const code = useSelector(state => state.Auth.userInfo.verificationCode);
 
     return (
         <View style={styles.container}>
@@ -43,12 +57,12 @@ export default function SignUp() {
                     </View>
                 </View>
                 <View style={styles.buttonsContainer}>
-                    <TouchableOpacity activeOpacity={.6} style={{ ...styles.buttonLogin }}>
+                    <TouchableOpacity onPress={() => forgetPasswordHandler(Email)} activeOpacity={.6} style={{ ...styles.buttonLogin }}>
                         <Text style={{ ...styles.buttonText }}>Request Reset Email</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-
+            {IsLoading && <Loader />}
         </View>
     )
 }

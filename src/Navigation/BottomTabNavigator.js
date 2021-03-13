@@ -7,7 +7,6 @@ import { useRoute } from "@react-navigation/native";
 import HomeScreen from "../Screens/Main/Home";
 import Settings from "../Screens/Main/Settings";
 import Chats from "../Screens/Main/Chats";
-import Details from "../Screens/Main/Details";
 import Notification from "../Screens/Main/Notification";
 import colors from "../Theme/Colors";
 import { FontAwesome, Ionicons } from "../Constants";

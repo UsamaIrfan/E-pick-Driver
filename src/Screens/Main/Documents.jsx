@@ -1,13 +1,34 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
+import {useSelector, useDispatch} from "react-redux"
 import Header from "../../components/Header";
-import { Ionicons } from "../../Constants"
+import Loader from '../../components/Loader';
+import { Ionicons, MaterialIcons, FontAwesome5 } from "../../Constants"
 import colors from "../../Theme/Colors";
 import Fonts from '../../Theme/Fonts';
+import {getAllDocuments} from "../../Store/action/Document";
 
 const { width, height } = Dimensions.get("window");
 
 const Documents = ({ navigation }) => {
+
+    const [IsLoading, setIsLoading] = useState(false)
+
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            getDocumentTypes()
+        });
+
+        return unsubscribe;
+    }, [navigation]);
+
+    const getDocumentTypes = async () => {
+        setIsLoading(true)
+        await dispatch(getAllDocuments())
+        setIsLoading(false)
+    }
 
     const DATA = [
         {
@@ -53,11 +74,25 @@ const Documents = ({ navigation }) => {
     //     )
     // }
 
+    const DocHeader = () => (
+        <View style={styles.headerContainer}>
+            <TouchableOpacity onPress={() => navigation.toggleDrawer()} activeOpacity={0.5} style={styles.headerLeft}>
+                <MaterialIcons name="menu" size={30} color={colors.White} />
+            </TouchableOpacity>
+            <View style={styles.headerRight}>
+                <TouchableOpacity activeOpacity={0.5} onPress={() => navigation.navigate("AddDocument")}>
+                    <Ionicons name="add-circle" size={30} color={colors.White} />
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
+
     return (
         <View>
             <Header name={"Documents"} icon={
                 <Ionicons name="document-text-sharp" size={24} color={colors.White} />
             } />
+            <DocHeader />
             <ScrollView style={styles.listContainer}>
                 {DATA.map((item, i) => (
                     <TouchableOpacity onPress={() => navigation.navigate("DocInfo", { item })} activeOpacity={0.5} key={i} style={styles.listItem}>
@@ -66,6 +101,7 @@ const Documents = ({ navigation }) => {
                     </TouchableOpacity>
                 ))}
             </ScrollView>
+            {IsLoading && <Loader />}
         </View>
     )
 }
@@ -87,5 +123,32 @@ const styles = StyleSheet.create({
         paddingVertical: height * 0.02,
         flexDirection: 'row',
         alignItems: "center"
-    }
+    },
+    headerContainer: {
+        flexDirection: "row",
+        height: height * 0.07,
+        backgroundColor: colors.DarkGreen,
+        alignItems: "center",
+        justifyContent: "space-between",
+        paddingHorizontal: width * 0.04,
+        marginTop: height * 0.006,
+    },
+    headerText: {
+        color: colors.White,
+        fontSize: width * 0.05,
+        fontFamily: Fonts.reg,
+    },
+    headerLeft: {
+        width: "20%",
+        flexDirection: "row",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: 'space-between',
+    },
+    headerRight: {
+        flexDirection: "row",
+        width: width * 0.15,
+        justifyContent: "flex-end",
+        alignItems: "center"
+    },
 })
