@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, StatusBar, Dimensions, TouchableOpacity, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, View, Image, StatusBar, Dimensions, TouchableWithoutFeedback, TouchableOpacity, TextInput, Button, Platform , KeyboardAvoidingView } from 'react-native'
 import colors from "../../Theme/Colors";
 import { FontAwesome, MaterialIcons, Entypo, Ionicons, AuthScreenLogo } from "../../Constants/index";
 import Fonts from '../../Theme/Fonts';
@@ -35,28 +35,10 @@ export default function SignUp({ navigation }) {
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
             getVehicleListing();
-            getLocation()
         });
 
         return unsubscribe;
     }, [navigation]);
-
-    const getLocation = async () => {
-        try {
-            Toast.showWithGravity("Getting Location", Toast.SHORT, Toast.BOTTOM);
-            let { status } = await Location.requestPermissionsAsync();
-            if (status !== 'granted') {
-                // setErrorMsg('Permission to access location was denied');
-                return;
-            }
-
-            let location = await Location.getCurrentPositionAsync({});
-            // setLocation(location);
-        }
-        catch {
-            Toast.showWithGravity("Unable To get location", Toast.SHORT, Toast.BOTTOM);
-        }
-    }
 
     const getVehicleListing = async () => {
         setIsLoading(true);
@@ -92,11 +74,14 @@ export default function SignUp({ navigation }) {
             <View style={styles.logoContainer}>
                 <Image style={styles.logo} source={AuthScreenLogo} />
             </View>
-            <View style={styles.inputsContainer}>
+            <View  style={styles.inputsContainer}>
                 <View style={styles.heading}>
                     <Text style={styles.headingText}>Register</Text>
                 </View>
-                <View style={styles.inputFieldContainer}>
+                <View
+                 style={styles.inputFieldContainer}
+                 behavior={Platform.OS === "ios" ? "padding" : "height"}
+                 >
                     <View style={styles.inputContainer}>
                         <Ionicons style={styles.inputIcon} name="person" size={18} color={colors.DarkGrey} />
                         <TextInput returnKeyType="next" onSubmitEditing={() => input2.current.focus()} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setFirstName(text)} placeholder="First Name" />

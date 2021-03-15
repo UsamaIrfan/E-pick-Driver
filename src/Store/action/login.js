@@ -15,7 +15,7 @@ import axios from "axios";
 // Demo Token Creation
 const token = "1234567890";
 
-export const LoginUser = (email, password, navigation) => {
+export const LoginUser = (email, password, Token, navigation) => {
   var postData = { email: email, password: password };
 
   return async (dispatch) => {
@@ -32,7 +32,7 @@ export const LoginUser = (email, password, navigation) => {
             Login: response.data,
           });
           navigation.navigate("MapMain");
-          saveDataToStorage({ ...response.data, token: token });
+          saveDataToStorage({ ...response.data, token: Token });
         }
       })
       .catch((error) => {

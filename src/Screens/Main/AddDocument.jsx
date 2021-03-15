@@ -1,15 +1,17 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, TextInput, Image } from 'react-native'
+import React, { useState , useEffect } from 'react'
+import { Platform, StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, TextInput, Image } from 'react-native'
 import Header from "../../components/Header";
 import { Ionicons, MaterialIcons, FontAwesome5 } from "../../Constants"
 import colors from "../../Theme/Colors";
 import Fonts from '../../Theme/Fonts';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as DocumentPicker from 'expo-document-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Toast from "react-native-simple-toast";
-import {addCustomerDocument} from "../../Store/action/Document";
+import { addCustomerDocument } from "../../Store/action/Document";
 import Loader from '../../components/Loader';
+import * as ImagePicker from 'expo-image-picker';
+import base64 from 'react-native-base64'
 
 const { width, height } = Dimensions.get("window");
 
@@ -19,44 +21,58 @@ const Documents = ({ navigation }) => {
     const [DocTypeName, setDocTypeName] = useState(null)
     const [DocType, setDocType] = useState(null)
     const [IsLoading, setIsLoading] = useState(false)
+    const [DocName, setDocName] = useState("")
+
+    useEffect(() => {
+        (async () => {
+          if (Platform.OS !== 'web') {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+              alert('Sorry, we need camera roll permissions to make this work!');
+            }
+          }
+        })();
+      }, []);
+
+    const dispatch = useDispatch() 
 
     const docTypes = useSelector(state => state.Documents.DocumentTypes);
     const userId = useSelector(state => state.Auth.Login.userId)
 
-    // const ListItem = ({ item }) => {
-    //     return (
-    //         <View style={styles.list}>
-    //             <View style={styles.listItem}>
-    //                 <Text>{item.name}</Text>
-    //                 <MaterialIcons name="delete" size={24} color={colors.White} />
-    //             </View>
-    //             <View>
-    //                 <Text>{item.description}</Text>
-    //             </View>
-    //             <View>
-    //                 <TouchableOpacity activeOpacity={0.8}>
-    //                     <Text>Read More.</Text>
-    //                 </TouchableOpacity>
-    //             </View>
-    //         </View>
-    //     )
-    // }
+    const convertStringToBinary = (str) => str.split("").map(l => l.charCodeAt(0).toString(2)).join(" ");
 
     const getDocument = async () => {
-        await DocumentPicker.getDocumentAsync()
-            .then((response) => {
-                setDocument(response)
-            })
-            .catch((error) => {
-                console.log(error)
-                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
-            })
+        // await DocumentPicker.getDocumentAsync()
+        //     .then((response) => {
+        //         setDocument(response)
+        //     })
+        //     .catch((error) => {
+        //         console.log(error)
+        //         Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+        //     })
+
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: false,
+            aspect: [4, 3],
+            quality: 1,
+          });
+      
+          console.log(result);
+      
+          if (!result.cancelled) {
+            setDocument(result);
+          }
     }
 
     const submitHandler = async () => {
-        if (Document?.type == "success") {
+        if (!Document?.cancelled && DocName != "" && DocType) {
+            const binaryURI = convertStringToBinary(Document.uri)
             setIsLoading(true)
-            await addCustomerDocument(userId ,Document.name, DocTypeName, Document.uri, DocType)
+            console.log(binaryURI)
+            console.log(`base64,${base64.encode(binaryURI)}`)
+            // console.log(userId ,DocName, Document.type, Document.uri, DocType)
+            await dispatch(addCustomerDocument(userId ,DocName, Document.type, `base64,${base64.encode(binaryURI)}`, DocType))
             setIsLoading(false)
         }
     }
@@ -76,15 +92,20 @@ const Documents = ({ navigation }) => {
             } />
             <DocHeader />
             <ScrollView style={styles.listContainer}>
-                {Document?.type == "success" &&
+                {console.log("Doc==>", Document)}
+                {Document &&
                     <View>
                         <View style={styles.labelInput}>
                             <Text style={styles.inputTitle}>Name</Text>
-                            <TextInput style={styles.docDetails} defaultValue={Document.name} editable={false} onChangeText={(text) => { }} />
+                            <TextInput style={styles.docDetails} placeholder="Enter Document Name" editable={true} onChangeText={(text) => { setDocName(text) }} />
+                        </View>
+                        <View style={styles.labelInput}>
+                            <Text style={styles.inputTitle}>File Type</Text>
+                            <TextInput style={styles.docDetails} defaultValue={Document?.type} editable={false} onChangeText={(text) => { }} />
                         </View>
                         <View style={styles.labelInput}>
                             <Text style={styles.inputTitle}>Size</Text>
-                            <TextInput style={styles.docDetails} defaultValue={Document.size.toString()} editable={false} onChangeText={(text) => { }} />
+                            <TextInput style={styles.docDetails} defaultValue={`${Document?.height.toString()} x ${Document?.width.toString()}`} editable={false} onChangeText={(text) => { }} />
                         </View>
                         {docTypes && <DropDownPicker
                             // items={[
@@ -108,12 +129,12 @@ const Documents = ({ navigation }) => {
                             onChangeItem={item => {
                                 // setDocTypeName("Someting")                                
                                 setDocType(parseInt(item.value));
-                                setDocTypeName(item.label)
-                                console.log(item)
+                                // setDocTypeName(item.label)
+                                // console.log(item)
                             }}
                         />}
                         <View style={styles.imageContainer}>
-                            <Image style={{ ...StyleSheet.absoluteFill, ...styles.docImage }} source={{ uri: Document.uri }} />
+                            <Image style={{ ...StyleSheet.absoluteFill, ...styles.docImage }} source={{ uri: Document?.uri }} />
                         </View>
                     </View>
                 }
@@ -214,7 +235,7 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.reg,
     },
     imageContainer: {
-        height: height * 0.4,
+        height: height * 0.3,
         width: "100%",
         borderWidth: 2,
         borderColor: colors.DarkGreen,

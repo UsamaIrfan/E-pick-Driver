@@ -1,4 +1,4 @@
-import React, { useState, useRef , useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { StyleSheet, Text, View, Image, StatusBar, Dimensions, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native'
 import { Button as PaperButton } from 'react-native-paper';
 import colors from "../../Theme/Colors";
@@ -11,11 +11,15 @@ import Toast from "react-native-simple-toast"
 import * as authActions from '../../Store/action/login';
 import Loader from "../../components/Loader";
 import * as signUpActions from "../../Store/action/login";
+import axios from "axios";
+import { Api } from "../../Store/server";
+
 
 const { height, width } = Dimensions.get("window")
 
 export default function SignUp({ navigation }) {
 
+    const [Token, setToken] = useState(null)
     const [Email, setEmail] = useState("");
     const [Password, setPassword] = useState("");
     const [IsLoading, setIsLoading] = useState(false);
@@ -31,9 +35,18 @@ export default function SignUp({ navigation }) {
     }, [navigation]);
 
     const authenticateHandler = async () => {
-        if (Email && Password !== '') {
+        await axios.get(`${Api}/api/Token`, {
+            headers: { "Content-Type": "application/json" },
+        })
+            .then((response) => {
+                setToken(response.data)
+            })
+            .catch((error) => {
+                alert("error", error.response)
+            })
+        if (Email && Token && Password !== '' ) {
             setIsLoading(true);
-            await dispatch(authActions.LoginUser(Email, Password, navigation));
+            await dispatch(authActions.LoginUser(Email, Password, Token, navigation));
             setIsLoading(false)
         }
     };
