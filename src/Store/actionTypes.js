@@ -14,3 +14,6 @@ export const SET_TRAVEL_LOCATION = "SET_TRAVEL_LOCATION";
 
 // Documents
 export const GET_ALL_DOCUMENT_TYPES = "GET_ALL_DOCUMENT_TYPES";
+
+//Update Profile
+export const UPDATE_DRIVER_PROFILE = "UPDATE_DRIVER_PROFILE";

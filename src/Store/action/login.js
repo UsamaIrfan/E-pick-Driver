@@ -6,6 +6,7 @@ import {
   GET_VEHICLES,
   GET_PROFILE,
   VERIFICATION_CODE,
+  UPDATE_DRIVER_PROFILE,
 } from "../actionTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-simple-toast";
@@ -102,6 +103,51 @@ export const SignUpUser = (
       })
       .catch((error) => {
         Toast.showWithGravity("Login failed", Toast.SHORT, Toast.TOP);
+        alert("error", error.response);
+      });
+  };
+};
+
+export const updateProfile = (
+  userId,
+  first,
+  last,
+  middle,
+  address,
+  phone,
+  insuranceNumber,
+  postalCode,
+  insuranceCompany,
+  insuranceExpiry,
+  license,
+  licenseExpiry,
+  city,
+  province,
+) => {
+  var postData = {};
+  return async (dispatch) => {
+    console.log(`${Api}/api/update-driver-profile?languageId=1&FirstName=${first}&MiddleName=${middle}&LastName=${last}&PhoneNumber=${phone}&Address=${address}&City=${city}&Province=${province}&userId=${userId}&PostalCode=${postalCode}&DriversLicenseNumber=${license}&DriversLicenseExpiryDate=${licenseExpiry}&InsuranceCompany=${insuranceCompany}&InsuranceNumber=${insuranceNumber}&InsuranceExpiryDate=${insuranceExpiry}&VehicleId=1`)
+    await axios
+      .post(
+        `${Api}/api/update-driver-profile?languageId=1&FirstName=${first}&MiddleName=${middle}&LastName=${last}&PhoneNumber=${phone}&Address=${address}&City=${city}&Province=${province}&userId=${userId}&PostalCode=${postalCode}&DriversLicenseNumber=${license}&DriversLicenseExpiryDate=${licenseExpiry}&InsuranceCompany=${insuranceCompany}&InsuranceNumber=${insuranceNumber}&InsuranceExpiryDate=${insuranceExpiry}&VehicleId=1`,
+        postData,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+        if (response.data.success == true) {
+          // dispatch({
+          //   type: UPDATE_DRIVER_PROFILE,
+          //   Login: response.data,
+          // });
+          // navigation.navigate("MapMain");
+          // saveDataToStorage({ ...response.data, token: Token });
+        }
+      })
+      .catch((error) => {
         alert("error", error.response);
       });
   };
@@ -207,7 +253,7 @@ export const getForgetCode = (emailOrPhone, navigation) => {
 };
 
 export const forgetPasword = (emailOrPhone, newPassword, navigation) => {
-  var postData = { emailOrPhone: emailOrPhone , newPassword: newPassword};
+  var postData = { emailOrPhone: emailOrPhone, newPassword: newPassword };
 
   return async (dispatch) => {
     await axios

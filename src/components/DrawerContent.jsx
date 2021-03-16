@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { StyleSheet, Text, View, Dimensions, Image, TouchableOpacity } from 'react-native'
 import { DrawerItem, DrawerContentScrollView } from "@react-navigation/drawer";
-import { Entypo, MaterialCommunityIcons, MaterialIcons, Ionicons, AuthScreenLogo, Feather } from "../Constants"
+import { Entypo, MaterialCommunityIcons, MaterialIcons, Ionicons, AuthScreenLogo, Feather , FontAwesome5 } from "../Constants"
 import colors from "../Theme/Colors";
 import {useSelector, useDispatch} from "react-redux";
 import { Avatar } from "react-native-paper";
@@ -50,6 +50,7 @@ const DrawerContent = (props) => {
                     <DrawerItem onPress={() => navigation.navigate("Reports")} icon={() => (<MaterialCommunityIcons name="file-document" size={28} color={colors.DarkGreen} />)} label={() => <Text style={styles.drawerText}>Reports</Text>} />
                     <DrawerItem onPress={() => navigation.navigate("Help")} icon={() => (<Entypo name="help-with-circle" size={28} color={colors.DarkGreen} />)} label={() => <Text style={styles.drawerText}>Help</Text>} />
                     <DrawerItem onPress={() => navigation.navigate("ChangePassword")} icon={() => (<MaterialIcons name="lock" size={24} color={colors.DarkGreen} />)} label={() => <Text style={styles.drawerText}>Change Password</Text>} />
+                    <DrawerItem onPress={() => navigation.navigate("Trips")} icon={() => (<FontAwesome5 name="location-arrow" size={24} color={colors.DarkGreen} />)} label={() => <Text style={styles.drawerText}>Trips</Text>} />
                 </View>
                 <View style={{marginTop: height * 0.1}}>
                     <TouchableOpacity onPress={logoutHandler} style={styles.logout}>

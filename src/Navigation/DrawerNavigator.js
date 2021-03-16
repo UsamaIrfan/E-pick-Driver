@@ -11,6 +11,7 @@ import HelpScreen from "../Screens/Main/Help";
 import Profile from "../Screens/Main/Profile";
 import ChangePassword from "../Screens/Main/ChangePassword";
 import AddDocument from "../Screens/Main/AddDocument";
+import Trips from "../Screens/Main/Trips/index";
 
 const DrawerNavigator = () => {
   const Drawer = createDrawerNavigator();
@@ -25,6 +26,7 @@ const DrawerNavigator = () => {
       <Drawer.Screen name="ChangePassword" component={ChangePassword} />
       <Drawer.Screen name="Help" component={HelpScreen} />
       <Drawer.Screen name="AddDocument" component={AddDocument} />
+      <Drawer.Screen name="Trips" component={Trips} />
     </Drawer.Navigator>
   );
 };
