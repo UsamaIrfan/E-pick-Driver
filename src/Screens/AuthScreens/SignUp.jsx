@@ -103,27 +103,26 @@ export default function SignUp({ navigation }) {
                         <TextInput secureTextEntry={true} style={styles.defaultInput} underlineColor={colors.DarkGreen} ref={input5} onChangeText={(text) => setPassword(text)} placeholder="Password" />
                     </View>
                     {vehicles && <DropDownPicker
-                        // items={[
-                        //     {label: 'UK', value: 'uk', },
-                        //     {label: 'France', value: 'france', },
-                        // ]}
+                        items={[
+                            {label: 'UK', value: 'uk', },
+                            {label: 'France', value: 'france', },
+                        ]}
 
                         items={vehicles?.map((item, i) => {
                             return {
-                                label: item.color.toString(),
-                                value: item.id,
+                                label: item.text.toString(),
+                                value: item.value,
                             }
                         })}
-                        defaultValue={vehicleId}
+                        defaultValue={vehicles[0].value}
                         containerStyle={{ height: 40 }}
                         style={{ backgroundColor: colors.BackgroundGrey, }}
-                        placeholder="Select Vehicle"
                         // itemStyle={{
                         //     justifyContent: 'flex-start'
                         // }}
                         dropDownStyle={{ backgroundColor: colors.BackgroundGrey, fontFamily: Fonts.reg }}
                         onChangeItem={item => {
-                            setVehicleId(item.value);
+                            setVehicleId(parseInt(item.value));
                         }}
                     />}
                 </View>

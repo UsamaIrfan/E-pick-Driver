@@ -123,6 +123,7 @@ export const updateProfile = (
   licenseExpiry,
   city,
   province,
+  navigation,
 ) => {
   var postData = {};
   return async (dispatch) => {
@@ -139,12 +140,8 @@ export const updateProfile = (
         console.log(response.data);
         Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
-          // dispatch({
-          //   type: UPDATE_DRIVER_PROFILE,
-          //   Login: response.data,
-          // });
-          // navigation.navigate("MapMain");
-          // saveDataToStorage({ ...response.data, token: Token });
+          navigation.navigate("Login");
+          AsyncStorage.removeItem("userData");
         }
       })
       .catch((error) => {
@@ -216,9 +213,37 @@ export const changePassword = (userId, oldPassword, newPassword) => {
         console.log(response.data);
         Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
-          console.log("success");
+          navigation.navigate("Login");
         }
-        // navigation.navigate("MapMain");
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
+  };
+};
+
+export const updateAvatar = (userId, name, type, uri) => {
+  var postData = {
+    userId: userId,
+    name: name,
+    type: type,
+    uri: uri,
+    appFileId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    documentTypeId: 0,
+  };
+
+  return async (dispatch) => {
+    await axios
+      .post(`${Api}/api/add-user-avatar?languageId=1`, postData, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log(response.data);
+        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+        if (response.data.success == true) {
+          console.log("success");
+          navigation.navigate("MapMain");
+        }
       })
       .catch((error) => {
         alert("error", error.response);

@@ -9,13 +9,18 @@ import Settings from "../Screens/Main/Settings";
 import Chats from "../Screens/Main/Chats";
 import Notification from "../Screens/Main/Notification";
 import colors from "../Theme/Colors";
-import { FontAwesome, Ionicons } from "../Constants";
+import { FontAwesome, Ionicons, MaterialCommunityIcons } from "../Constants";
 
 const { height } = Dimensions.get("window");
 
 const BottomTabNavigator = ({ navigation }) => {
   const Tab = createBottomTabNavigator();
   const route = useRoute();
+
+  // Demo Booking
+  const Booking = {
+    active: false,
+  };
 
   return (
     <Tab.Navigator
@@ -46,11 +51,51 @@ const BottomTabNavigator = ({ navigation }) => {
         component={Chats}
         options={{
           tabBarIcon: (props) => (
-            <Ionicons
-              name="ios-chatbubbles"
-              color={props.color}
-              size={props.size}
-            />
+            <TouchableOpacity
+              style={{
+                height: "100%",
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              activeOpacity={1}
+              onPress={(e) => {
+                e.preventDefault();
+                if (Booking.active) {
+                  navigation.navigate("Chats");
+                }
+                // console.log(route.name)
+              }}
+            >
+              <TouchableOpacity
+                onPress={() => {
+                  if (Booking.active) {
+                    navigation.navigate("Chats");
+                  }
+                }}
+                activeOpacity={1}
+                style={
+                  {
+                    // height: "100%",
+                    // width: "100%",
+                  }
+                }
+              >
+                {Booking.active ? (
+                  <Ionicons
+                    name="ios-chatbubbles"
+                    color={props.color}
+                    size={props.size}
+                  />
+                ) : (
+                  <MaterialCommunityIcons
+                    name="chat-remove"
+                    size={props.size}
+                    color={props.color}
+                  />
+                )}
+              </TouchableOpacity>
+            </TouchableOpacity>
           ),
         }}
       />

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
-import {useSelector, useDispatch} from "react-redux"
+import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, TextInput , Image } from 'react-native'
+import { useSelector, useDispatch } from "react-redux"
 import Header from "../../components/Header";
 import Loader from '../../components/Loader';
 import { Ionicons, MaterialIcons, FontAwesome5 } from "../../Constants"
 import colors from "../../Theme/Colors";
 import Fonts from '../../Theme/Fonts';
-import {getAllDocuments} from "../../Store/action/Document";
+import { getAllDocumentsTypes, getAllDocuments } from "../../Store/action/Document";
 
 const { width, height } = Dimensions.get("window");
 
@@ -14,7 +14,7 @@ const Documents = ({ navigation }) => {
 
     const [IsLoading, setIsLoading] = useState(false)
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -24,11 +24,17 @@ const Documents = ({ navigation }) => {
         return unsubscribe;
     }, [navigation]);
 
+    const userLoggedIn = useSelector(state => state.Auth.Login)
+    const documents = useSelector(state => state.Documents.Documents);
+
     const getDocumentTypes = async () => {
         setIsLoading(true)
-        await dispatch(getAllDocuments())
+        await dispatch(getAllDocumentsTypes())
+        await dispatch(getAllDocuments(userLoggedIn.userId))
         setIsLoading(false)
     }
+
+
 
     const DATA = [
         {
@@ -55,25 +61,6 @@ const Documents = ({ navigation }) => {
         },
     ]
 
-    // const ListItem = ({ item }) => {
-    //     return (
-    //         <View style={styles.list}>
-    //             <View style={styles.listItem}>
-    //                 <Text>{item.name}</Text>
-    //                 <MaterialIcons name="delete" size={24} color={colors.White} />
-    //             </View>
-    //             <View>
-    //                 <Text>{item.description}</Text>
-    //             </View>
-    //             <View>
-    //                 <TouchableOpacity activeOpacity={0.8}>
-    //                     <Text>Read More.</Text>
-    //                 </TouchableOpacity>
-    //             </View>
-    //         </View>
-    //     )
-    // }
-
     const DocHeader = () => (
         <View style={styles.headerContainer}>
             <TouchableOpacity onPress={() => navigation.toggleDrawer()} activeOpacity={0.5} style={styles.headerLeft}>
@@ -87,6 +74,26 @@ const Documents = ({ navigation }) => {
         </View>
     )
 
+    const List = ({ item }) => (
+        <TouchableOpacity onPress={() => { }} activeOpacity={0.5} style={styles.listItem}>
+            <View>
+                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                    <Text style={styles.inputLabel}>Name </Text>
+                    <TextInput editable={false} maxLength={20} defaultValue={`${item.name}`} style={styles.docName} />
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                    <Text style={styles.inputLabel}>Document Type </Text>
+                    <TextInput editable={false} maxLength={20} defaultValue={`${item.documentTypeId}`} style={styles.docName} />
+                </View>
+            </View>
+            <View>
+                <View style={styles.imageContainer}>
+                    <Image source={{uri: item.path}} style={styles.image} />
+                </View>
+            </View>
+        </TouchableOpacity>
+    )
+
     return (
         <View>
             <Header name={"Documents"} icon={
@@ -94,11 +101,8 @@ const Documents = ({ navigation }) => {
             } />
             <DocHeader />
             <ScrollView style={styles.listContainer}>
-                {DATA.map((item, i) => (
-                    <TouchableOpacity onPress={() => navigation.navigate("DocInfo", { item })} activeOpacity={0.5} key={i} style={styles.listItem}>
-                        <Ionicons style={{ marginRight: width * 0.02, }} name="document-text-sharp" size={40} color={colors.LightGrey} />
-                        <Text style={{ fontSize: width * 0.04, fontFamily: Fonts.reg }}>{item.name}</Text>
-                    </TouchableOpacity>
+                {documents && documents.map((item, i) => (
+                    <List item={item} key={i} />
                 ))}
             </ScrollView>
             {IsLoading && <Loader />}
@@ -115,14 +119,14 @@ const styles = StyleSheet.create({
     },
     listItem: {
         backgroundColor: colors.White,
-        marginTop: height * 0.02,
+        marginTop: height * 0.01,
         borderColor: colors.DarkGrey,
         borderWidth: 0.5,
         marginHorizontal: width * 0.01,
-        paddingHorizontal: width * 0.02,
-        paddingVertical: height * 0.02,
         flexDirection: 'row',
-        alignItems: "center"
+        paddingVertical: height * 0.02,
+        paddingHorizontal: width * 0.02,
+        justifyContent: "space-between"
     },
     headerContainer: {
         flexDirection: "row",
@@ -150,5 +154,22 @@ const styles = StyleSheet.create({
         width: width * 0.15,
         justifyContent: "flex-end",
         alignItems: "center"
+    },
+    docName: {
+        color: colors.DarkGreen,
+    },
+    inputLabel: {
+        color: colors.DarkGreen,
+        fontFamily: Fonts.bold,
+    },
+    image: {
+        width: "100%",
+        height: "100%",
+        ...StyleSheet.absoluteFill,
+    },
+    imageContainer: {
+        backgroundColor: colors.LightGrey2,
+        width: width * 0.15,
+        height: height * 0.08
     },
 })

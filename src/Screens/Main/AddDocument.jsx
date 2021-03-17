@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Platform, StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, TextInput, Image } from 'react-native'
 import Header from "../../components/Header";
 import { Ionicons, MaterialIcons, FontAwesome5 } from "../../Constants"
@@ -25,16 +25,16 @@ const Documents = ({ navigation }) => {
 
     useEffect(() => {
         (async () => {
-          if (Platform.OS !== 'web') {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-              alert('Sorry, we need camera roll permissions to make this work!');
+            if (Platform.OS !== 'web') {
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                    alert('Sorry, we need camera roll permissions to make this work!');
+                }
             }
-          }
         })();
-      }, []);
+    }, []);
 
-    const dispatch = useDispatch() 
+    const dispatch = useDispatch()
 
     const docTypes = useSelector(state => state.Documents.DocumentTypes);
     const userId = useSelector(state => state.Auth.Login.userId)
@@ -56,22 +56,24 @@ const Documents = ({ navigation }) => {
             allowsEditing: false,
             aspect: [4, 3],
             quality: 1,
-          });
-      
-          console.log(result);
-      
-          if (!result.cancelled) {
+        });
+
+        // console.log(result);
+
+        if (!result.cancelled) {
             setDocument(result);
-          }
+            const docURIArr = result.uri.split("/");
+            setDocName(docURIArr[docURIArr.length - 1])
+        }
     }
 
     const submitHandler = async () => {
         if (!Document?.cancelled && DocName != "" && DocType) {
             const binaryURI = convertStringToBinary(Document.uri)
             setIsLoading(true)
-            console.log(binaryURI)
-            console.log(`base64,${base64.encode(binaryURI)}`)
-            // console.log(userId ,DocName, Document.type, Document.uri, DocType)
+            // console.log(binaryURI)
+            // console.log(`base64,${base64.encode(binaryURI)}`)
+            console.log(userId ,DocName, Document.type, `base64,${base64.encode(binaryURI)}`, DocType)
             await dispatch(addCustomerDocument(userId ,DocName, Document.type, `base64,${base64.encode(binaryURI)}`, DocType))
             setIsLoading(false)
         }
@@ -85,6 +87,7 @@ const Documents = ({ navigation }) => {
         </View>
     )
 
+
     return (
         <View style={{ backgroundColor: colors.BackgroundGrey }}>
             <Header name={"Add Document"} icon={
@@ -97,7 +100,7 @@ const Documents = ({ navigation }) => {
                     <View>
                         <View style={styles.labelInput}>
                             <Text style={styles.inputTitle}>Name</Text>
-                            <TextInput style={styles.docDetails} placeholder="Enter Document Name" editable={true} onChangeText={(text) => { setDocName(text) }} />
+                            <TextInput style={styles.docDetails} defaultValue={DocName} editable={false} onChangeText={(text) => { setDocName(`${text}.png`) }} />
                         </View>
                         <View style={styles.labelInput}>
                             <Text style={styles.inputTitle}>File Type</Text>
