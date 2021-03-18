@@ -2,7 +2,13 @@ import { GET_ALL_DOCUMENTS, GET_ALL_DOCUMENT_TYPES } from "../actionTypes";
 
 const initialState = {
   DocumentTypes: {},
-  Documents: {},
+  Documents: [
+    {
+      name: null,
+      uri: null,
+      documentTypeId: null,
+    },
+  ],
 };
 
 export default (state = initialState, action) => {

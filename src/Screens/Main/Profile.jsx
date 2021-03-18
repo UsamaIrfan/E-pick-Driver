@@ -13,6 +13,8 @@ import { updateProfile } from "../../Store/action/login";
 import * as ImagePicker from 'expo-image-picker';
 import base64 from 'react-native-base64'
 import { updateAvatar } from "../../Store/action/login";
+import * as FileSystem from 'expo-file-system';
+import Toast from "react-native-simple-toast";
 
 const { width, height } = Dimensions.get("window")
 
@@ -44,6 +46,7 @@ const Profile = ({ route, navigation }) => {
     const [Phone, setPhone] = useState();
     const [Address, setAddress] = useState();
     const [UserAvatar, setUserAvatar] = useState();
+    const [Doc64URI, setDoc64URI] = useState();
 
     const dispatch = useDispatch();
 
@@ -65,7 +68,7 @@ const Profile = ({ route, navigation }) => {
         //         Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
         //     })
 
-        let result = await ImagePicker.launchImageLibraryAsync({
+        let response = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
             aspect: [4, 3],
@@ -74,15 +77,26 @@ const Profile = ({ route, navigation }) => {
 
         // console.log(result);
 
-        if (!result.cancelled) {
-            setUserAvatar(result);
-            const docURIArr = result.uri.split("/");
-            const avatarName = docURIArr[docURIArr.length - 1]
-            const binaryURI = convertStringToBinary(result.uri)
-            setUserAvatar(result.uri)
-            console.log(result.uri)
+        if (!response.cancelled) {
             setIsLoading(true)
-            dispatch(updateAvatar(userLoggedIn.userId, avatarName, result.type, `base64,${base64.encode(binaryURI)}`))
+            setUserAvatar(response);
+            const docURIArr = response.uri.split("/");
+            const avatarName = docURIArr[docURIArr.length - 1]
+            const docType = response.uri.split(".")
+            const fileBase64 = await FileSystem.readAsStringAsync(response.uri, {
+                encoding: FileSystem.EncodingType.Base64,
+            })
+                .then((response64) => {
+                    setDoc64URI(`base64, ${response64}`)
+                    console.log({
+                        name: avatarName,
+                        type: docType[docType.length - 1],
+                        uri: response.uri,
+                    })
+                }).catch((error) => {
+                    Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                })
+            dispatch(updateAvatar(userLoggedIn.userId, avatarName, response.type, Doc64URI))
             setIsLoading(false)
         }
     }
@@ -120,7 +134,7 @@ const Profile = ({ route, navigation }) => {
                 <View style={styles.container}>
                     <View style={styles.upperView}>
                         <TouchableRipple onPress={getUserAvatar} style={{ zIndex: 2 }} rippleColor={colors.LightGrey2}>
-                            <Avatar.Image source={UserAvatar ? {uri: UserAvatar} : avatar} size={110} style={{ zIndex: 1 }} />
+                            <Avatar.Image source={UserAvatar ? { uri: UserAvatar.uri } : avatar} size={110} style={{ zIndex: 1 }} />
                         </TouchableRipple>
                         <Text style={{ fontSize: width * 0.07, color: colors.DarkGreen, fontFamily: Fonts.reg }}>{currentUser?.userName}</Text>
                         <Text style={{ fontFamily: Fonts.reg }}>{currentUser?.role}</Text>

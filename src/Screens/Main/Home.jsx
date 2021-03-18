@@ -11,7 +11,7 @@ import { Ionicons, MaterialCommunityIcons, Entypo } from "../../Constants/index"
 import Fonts from '../../Theme/Fonts';
 import Toast from "react-native-simple-toast";
 import MapViewComponent from "../../components/MapView";
-import { setTravelData , addBooking  } from "../../Store/action/Location";
+import { setTravelData  } from "../../Store/action/Location";
 import Loader from "../../components/Loader";
 
 const { width, height } = Dimensions.get("window")
@@ -45,7 +45,6 @@ const Home = ({ navigation }) => {
     const setTrip = (from, to) => {
         setIsLoading(true)
         dispatch(setTravelData({ from, to }))
-        dispatch(addBooking(userLoggedIn.userId, "2021-03-17T07:40:20.506Z", from.data.description, from.details.geometry.location.lng, from.details.geometry.location.lat, to.data.description, to.details.geometry.location.lng, to.details.geometry.location.lat))
         setIsLoading(false)
     }
 

@@ -18,3 +18,6 @@ export const GET_ALL_DOCUMENTS = "GET_ALL_DOCUMENTS";
 
 //Update Profile
 export const UPDATE_DRIVER_PROFILE = "UPDATE_DRIVER_PROFILE";
+
+//Bookings 
+export const GET_DRIVER_BOOKINGS = "GET_DRIVER_BOOKINGS";

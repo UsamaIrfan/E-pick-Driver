@@ -69,7 +69,7 @@ const DrawerContent = (props) => {
                     <DrawerItem onPress={() => navigation.navigate("ChangePassword")} icon={() => (<MaterialIcons name="lock" size={24} color={colors.DarkGreen} />)} label={() => <Text style={styles.drawerText}>Change Password</Text>} />
                     <DrawerItem onPress={() => navigation.navigate("Trips")} icon={() => (<FontAwesome5 name="location-arrow" size={24} color={colors.DarkGreen} />)} label={() => <Text style={styles.drawerText}>Trips</Text>} />
                 </View>
-                <View style={{ marginTop: height * 0.1 }}>
+                <View style={{ marginTop: height * 0.05 }}>
                     <TouchableOpacity onPress={logoutHandler} style={styles.logout}>
                         <Feather name="log-out" size={22} color={colors.DarkGrey} />
                         <Text style={styles.logOutText}>  Log Out</Text>
@@ -140,6 +140,6 @@ const styles = StyleSheet.create({
     },
     version: {
         marginTop: height * 0.02,
-        alignItems: "center"
+        alignItems: "center",
     }
 })

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Platform, StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, TextInput, Image } from 'react-native'
+import { Modal, Alert, Platform, StyleSheet, Text, View, ScrollView, TouchableHighlight, Dimensions, TouchableOpacity, TextInput, Image } from 'react-native'
 import Header from "../../components/Header";
 import { Ionicons, MaterialIcons, FontAwesome5 } from "../../Constants"
 import colors from "../../Theme/Colors";
@@ -11,17 +11,20 @@ import Toast from "react-native-simple-toast";
 import { addCustomerDocument } from "../../Store/action/Document";
 import Loader from '../../components/Loader';
 import * as ImagePicker from 'expo-image-picker';
-import base64 from 'react-native-base64'
+import base64 from 'react-native-base64';
+import * as FileSystem from 'expo-file-system';
 
 const { width, height } = Dimensions.get("window");
 
 const Documents = ({ navigation }) => {
 
     const [Document, setDocument] = useState(null)
-    const [DocTypeName, setDocTypeName] = useState(null)
     const [DocType, setDocType] = useState(null)
     const [IsLoading, setIsLoading] = useState(false)
     const [DocName, setDocName] = useState("")
+    const [modalVisible, setModalVisible] = useState(false);
+    const [IsImage, setIsImage] = useState(false)
+    const [Doc64URI, setDoc64URI] = useState();
 
     useEffect(() => {
         (async () => {
@@ -41,40 +44,56 @@ const Documents = ({ navigation }) => {
 
     const convertStringToBinary = (str) => str.split("").map(l => l.charCodeAt(0).toString(2)).join(" ");
 
+    const AllowedImageTypes = [
+        "jpeg",
+        "jpg",
+        "png",
+    ]
+
     const getDocument = async () => {
-        // await DocumentPicker.getDocumentAsync()
-        //     .then((response) => {
-        //         setDocument(response)
-        //     })
-        //     .catch((error) => {
-        //         console.log(error)
-        //         Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
-        //     })
 
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: false,
-            aspect: [4, 3],
-            quality: 1,
-        });
+        await DocumentPicker.getDocumentAsync()
+            .then(async (response) => {
+                if (response.type == "success") {
+                    console.log(response)
+                    const docType = response.name.split(".")
+                    const fileBase64 = await FileSystem.readAsStringAsync(response.uri, {
+                        encoding: FileSystem.EncodingType.Base64,
+                    })
+                        .then((response64) => {
+                            setDocument({
+                                name: response.name,
+                                type: docType[docType.length - 1],
+                                uri: response.uri,
+                            })
+                            setDoc64URI(`base64, ${response64}`)
+                            setDocName(response.name)
+                        }).catch((error) => {
+                            Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+                        })
+                    setModalVisible(false)
+                    if (AllowedImageTypes.includes(docType[docType.length - 1])) {
+                        setIsImage(true)
+                    } else {
+                        setIsImage(false)
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+                Toast.showWithGravity(error, Toast.SHORT, Toast.BOTTOM);
+            })
 
-        // console.log(result);
-
-        if (!result.cancelled) {
-            setDocument(result);
-            const docURIArr = result.uri.split("/");
-            setDocName(docURIArr[docURIArr.length - 1])
-        }
     }
 
     const submitHandler = async () => {
-        if (!Document?.cancelled && DocName != "" && DocType) {
+        if (!Document?.cancelled && DocName != "" && DocType && Doc64URI) {
             const binaryURI = convertStringToBinary(Document.uri)
             setIsLoading(true)
             // console.log(binaryURI)
             // console.log(`base64,${base64.encode(binaryURI)}`)
-            console.log(userId ,DocName, Document.type, `base64,${base64.encode(binaryURI)}`, DocType)
-            await dispatch(addCustomerDocument(userId ,DocName, Document.type, `base64,${base64.encode(binaryURI)}`, DocType))
+            console.log(userId, DocName, Document.type, Doc64URI, DocType)
+            await dispatch(addCustomerDocument(userId, DocName, Document.type, Doc64URI, DocType))
             setIsLoading(false)
         }
     }
@@ -90,6 +109,35 @@ const Documents = ({ navigation }) => {
 
     return (
         <View style={{ backgroundColor: colors.BackgroundGrey }}>
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                style={{
+                    justifyContent: 'flex-end',
+                    margin: 0,
+                }}
+                onRequestClose={() => {
+                    Alert.alert('Modal has been closed.');
+                }}>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <TouchableOpacity
+                            onPress={getDocument}
+                            style={{ ...styles.openButton, backgroundColor: colors.LightGrey2, marginBottom: 10 }}
+                        >
+                            <Text style={{ ...styles.modalText, color: colors.White, fontSize: 14 }}>Pick Document</Text>
+                        </TouchableOpacity>
+                        <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: colors.DarkGreen }}
+                            onPress={() => {
+                                setModalVisible(!modalVisible);
+                            }}>
+                            <Text style={styles.textStyle}>Cancel</Text>
+                        </TouchableHighlight>
+                    </View>
+                </View>
+            </Modal>
             <Header name={"Add Document"} icon={
                 <Ionicons name="document-text-sharp" size={24} color={colors.White} />
             } />
@@ -100,16 +148,16 @@ const Documents = ({ navigation }) => {
                     <View>
                         <View style={styles.labelInput}>
                             <Text style={styles.inputTitle}>Name</Text>
-                            <TextInput style={styles.docDetails} defaultValue={DocName} editable={false} onChangeText={(text) => { setDocName(`${text}.png`) }} />
+                            <TextInput style={styles.docDetails} defaultValue={DocName} editable={false} onChangeText={() => { }} />
                         </View>
                         <View style={styles.labelInput}>
                             <Text style={styles.inputTitle}>File Type</Text>
                             <TextInput style={styles.docDetails} defaultValue={Document?.type} editable={false} onChangeText={(text) => { }} />
                         </View>
-                        <View style={styles.labelInput}>
+                        {Document.height && <View style={styles.labelInput}>
                             <Text style={styles.inputTitle}>Size</Text>
                             <TextInput style={styles.docDetails} defaultValue={`${Document?.height.toString()} x ${Document?.width.toString()}`} editable={false} onChangeText={(text) => { }} />
-                        </View>
+                        </View>}
                         {docTypes && <DropDownPicker
                             // items={[
                             //     { label: 'UK', value: 'uk', },
@@ -136,13 +184,13 @@ const Documents = ({ navigation }) => {
                                 // console.log(item)
                             }}
                         />}
-                        <View style={styles.imageContainer}>
+                        {IsImage && <View style={styles.imageContainer}>
                             <Image style={{ ...StyleSheet.absoluteFill, ...styles.docImage }} source={{ uri: Document?.uri }} />
-                        </View>
+                        </View>}
                     </View>
                 }
                 <View style={{ ...styles.labelInput, borderBottomWidth: null }}>
-                    <TouchableOpacity activeOpacity={0.5} onPress={getDocument}>
+                    <TouchableOpacity activeOpacity={0.5} onPress={() => setModalVisible(true)}>
                         <Ionicons name="add-circle" size={50} color={colors.DarkGreen} />
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity={.6} onPress={submitHandler} style={{ ...styles.buttonSave }}>
@@ -158,6 +206,7 @@ const Documents = ({ navigation }) => {
 export default Documents
 
 const styles = StyleSheet.create({
+
     listContainer: {
         backgroundColor: colors.BackgroundGrey,
         height: height * 0.9,
@@ -260,6 +309,32 @@ const styles = StyleSheet.create({
         color: colors.White,
         fontSize: 18,
         textTransform: "none",
+        fontFamily: Fonts.reg,
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        margin: 0,
+    },
+    modalView: {
+        backgroundColor: colors.White,
+        borderRadius: 0,
+        padding: 35,
+        width: width,
+    },
+    openButton: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
+    modalText: {
+        textAlign: 'center',
         fontFamily: Fonts.reg,
     },
 })

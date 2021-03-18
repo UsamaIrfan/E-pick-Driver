@@ -1,4 +1,4 @@
-import { GET_LOCATION, SET_TRAVEL_LOCATION } from "../actionTypes";
+import { GET_LOCATION, SET_TRAVEL_LOCATION , GET_DRIVER_BOOKINGS } from "../actionTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Api } from "../server";
@@ -37,6 +37,59 @@ export const addBooking = (customerId, bookingTime, pickupLocation, pickupLocati
       .then((response) => {
         console.log(response.data);
         Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
+  };
+};
+
+
+export const getDriverBookingsScheduled = (userId) => {
+  return async (dispatch) => {
+    console.log(userId)
+    await axios
+      .get(
+        `${Api}/api/get-driver-bookings/${userId}?languageId=1?bookingStatus=0`,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .then((response) => {
+        console.log(response.data.bookings);
+        Toast.showWithGravity("Bookings Updated", Toast.SHORT, Toast.TOP);
+        if (response.data.success == true) {
+          dispatch({
+            type: GET_DRIVER_BOOKINGS,
+            bookings: response.data.bookings,
+          });
+        }
+      })
+      .catch((error) => {
+        alert("error", error.response);
+      });
+  };
+};
+
+export const getDriverBookings = (userId) => {
+  return async (dispatch) => {
+    console.log(userId)
+    await axios
+      .get(
+        `${Api}/api/get-driver-bookings/${userId}?languageId=1?bookingStatus=0`,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .then((response) => {
+        console.log(response.data.bookings);
+        Toast.showWithGravity("Bookings Updated", Toast.SHORT, Toast.TOP);
+        if (response.data.success == true) {
+          dispatch({
+            type: GET_DRIVER_BOOKINGS,
+            bookings: response.data.bookings,
+          });
+        }
       })
       .catch((error) => {
         alert("error", error.response);

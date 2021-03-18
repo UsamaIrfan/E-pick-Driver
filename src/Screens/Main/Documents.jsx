@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, TextInput , Image } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, TextInput, Image } from 'react-native'
 import { useSelector, useDispatch } from "react-redux"
 import Header from "../../components/Header";
 import Loader from '../../components/Loader';
@@ -74,8 +74,16 @@ const Documents = ({ navigation }) => {
         </View>
     )
 
-    const List = ({ item }) => (
-        <TouchableOpacity onPress={() => { }} activeOpacity={0.5} style={styles.listItem}>
+    const List = ({ item }) => {
+        const fileTypeArr = item.path.split(".")
+        const fileType = fileTypeArr[fileTypeArr.length - 1]
+        const AllowedImageTypes = [
+            "jpeg",
+            "jpg",
+            "png",
+        ]
+
+        return (<TouchableOpacity onPress={() => { }} activeOpacity={0.5} style={styles.listItem}>
             <View>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
                     <Text style={styles.inputLabel}>Name </Text>
@@ -88,11 +96,15 @@ const Documents = ({ navigation }) => {
             </View>
             <View>
                 <View style={styles.imageContainer}>
-                    <Image source={{uri: item.path}} style={styles.image} />
+                    {AllowedImageTypes.includes(fileType)
+                        ? <Image source={{ uri: item.path }} style={styles.image} />
+                        : <Text style={{ textTransform: "uppercase", height: "100%", width: "100%" ,  textAlignVertical: "center", textAlign: "center", fontFamily: Fonts.reg, fontSize: 20, color: colors.LightGrey}} >{fileType}</Text>
+                    }
                 </View>
             </View>
         </TouchableOpacity>
-    )
+        )
+    }
 
     return (
         <View>
@@ -115,7 +127,7 @@ export default Documents
 const styles = StyleSheet.create({
     listContainer: {
         backgroundColor: colors.BackgroundGrey,
-        height: height * 0.9
+        height: height * 0.8
     },
     listItem: {
         backgroundColor: colors.White,

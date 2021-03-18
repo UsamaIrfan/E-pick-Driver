@@ -127,10 +127,10 @@ export const updateProfile = (
 ) => {
   var postData = {};
   return async (dispatch) => {
-    console.log(`${Api}/api/update-driver-profile?languageId=1&FirstName=${first}&MiddleName=${middle}&LastName=${last}&PhoneNumber=${phone}&Address=${address}&City=${city}&Province=${province}&userId=${userId}&PostalCode=${postalCode}&DriversLicenseNumber=${license}&DriversLicenseExpiryDate=${licenseExpiry}&InsuranceCompany=${insuranceCompany}&InsuranceNumber=${insuranceNumber}&InsuranceExpiryDate=${insuranceExpiry}&VehicleId=1`)
+    console.log(`${Api}/api/update-client-profile?languageId=1&FirstName=${first}&MiddleName=${middle}&LastName=${last}&PhoneNumber=${phone}&Address=${address}&City=${city}&Province=${province}&userId=${userId}&PostalCode=${postalCode}&DriversLicenseNumber=${license}&DriversLicenseExpiryDate=${licenseExpiry}&InsuranceCompany=${insuranceCompany}&InsuranceNumber=${insuranceNumber}&InsuranceExpiryDate=${insuranceExpiry}&VehicleId=1`)
     await axios
       .post(
-        `${Api}/api/update-driver-profile?languageId=1&FirstName=${first}&MiddleName=${middle}&LastName=${last}&PhoneNumber=${phone}&Address=${address}&City=${city}&Province=${province}&userId=${userId}&PostalCode=${postalCode}&DriversLicenseNumber=${license}&DriversLicenseExpiryDate=${licenseExpiry}&InsuranceCompany=${insuranceCompany}&InsuranceNumber=${insuranceNumber}&InsuranceExpiryDate=${insuranceExpiry}&VehicleId=1`,
+        `${Api}/api/update-client-profile?languageId=1&FirstName=${first}&MiddleName=${middle}&LastName=${last}&PhoneNumber=${phone}&Address=${address}&City=${city}&Province=${province}&userId=${userId}&PostalCode=${postalCode}&DriversLicenseNumber=${license}&DriversLicenseExpiryDate=${licenseExpiry}&InsuranceCompany=${insuranceCompany}&InsuranceNumber=${insuranceNumber}&InsuranceExpiryDate=${insuranceExpiry}&VehicleId=1`,
         postData,
         {
           headers: { "Content-Type": "application/json" },
@@ -242,7 +242,6 @@ export const updateAvatar = (userId, name, type, uri) => {
         Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
           console.log("success");
-          navigation.navigate("MapMain");
         }
       })
       .catch((error) => {

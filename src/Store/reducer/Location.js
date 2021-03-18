@@ -1,8 +1,17 @@
-import { GET_LOCATION, SET_TRAVEL_LOCATION } from "../actionTypes";
+import { GET_DRIVER_BOOKINGS, GET_LOCATION, SET_TRAVEL_LOCATION } from "../actionTypes";
 
 const initialState = {
   location: {},
   travel: {},
+  bookings: [{
+    driverName: null,
+    clientName: "",
+    vehicleName: "",
+    bookingTime: "",
+    pickupLocation: "",
+    destination: "",
+    status: "Pending"
+  },]
 };
 
 export default (state = initialState, action) => {
@@ -13,6 +22,11 @@ export default (state = initialState, action) => {
       return {
         ...state, 
         travel: action.travel,
+      }
+      case GET_DRIVER_BOOKINGS: 
+      return {
+        ...state,
+        bookings: action.bookings,
       }
   }
   return state;

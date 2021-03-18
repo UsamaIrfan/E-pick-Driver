@@ -9,7 +9,7 @@ const Tab = createMaterialTopTabNavigator();
 
 const TripTopTabNavigator = () => {
   return (
-    <Tab.Navigator tabBarOptions={{
+    <Tab.Navigator initialRouteName="Schedule" tabBarOptions={{
       inactiveTintColor: colors.White,
       activeTintColor: colors.White,
       pressColor: colors.LightGrey2,
