@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from
 import colors from "../../../Theme/Colors";
 import { Entypo } from "../../../Constants"
 import Fonts from '../../../Theme/Fonts';
-import { getDriverBookingsScheduled } from "../../../Store/action/Location";
+import { getDriverBookings } from "../../../Store/action/Location";
 import Loader from '../../../components/Loader';
 
 const { height, width } = Dimensions.get("window")
@@ -28,7 +28,7 @@ const Schedule = ({ navigation }) => {
 
     const getAllBookings = async () => {
         setIsLoading(true)
-        await dispatch(getDriverBookingsScheduled(userLoggedIn.userId))
+        await dispatch(getDriverBookings(userLoggedIn.userId))
         setIsLoading(false)
     }
 

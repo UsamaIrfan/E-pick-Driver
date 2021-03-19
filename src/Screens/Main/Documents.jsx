@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, TextI
 import { useSelector, useDispatch } from "react-redux"
 import Header from "../../components/Header";
 import Loader from '../../components/Loader';
-import { Ionicons, MaterialIcons, FontAwesome5 } from "../../Constants"
+import { Ionicons, MaterialIcons, FontAwesome5, AntDesign } from "../../Constants"
 import colors from "../../Theme/Colors";
 import Fonts from '../../Theme/Fonts';
 import { getAllDocumentsTypes, getAllDocuments } from "../../Store/action/Document";
@@ -77,14 +77,18 @@ const Documents = ({ navigation }) => {
     const List = ({ item }) => {
         const fileTypeArr = item.path.split(".")
         const fileType = fileTypeArr[fileTypeArr.length - 1]
+        let image = false
         const AllowedImageTypes = [
             "jpeg",
             "jpg",
             "png",
         ]
+        if (AllowedImageTypes.includes(fileType)) {
+            image = true
+        }
 
-        return (<TouchableOpacity onPress={() => { }} activeOpacity={0.5} style={styles.listItem}>
-            <View>
+        return (<TouchableOpacity onPress={() => { navigation.navigate("DocInfo", { item, image, fileType }) }} activeOpacity={0.5} style={styles.listItem}>
+            <View style={{justifyContent: "space-between"}}>
                 <View style={{ flexDirection: 'row', alignItems: "center" }}>
                     <Text style={styles.inputLabel}>Name </Text>
                     <TextInput editable={false} maxLength={20} defaultValue={`${item.name}`} style={styles.docName} />
@@ -98,7 +102,18 @@ const Documents = ({ navigation }) => {
                 <View style={styles.imageContainer}>
                     {AllowedImageTypes.includes(fileType)
                         ? <Image source={{ uri: item.path }} style={styles.image} />
-                        : <Text style={{ textTransform: "uppercase", height: "100%", width: "100%" ,  textAlignVertical: "center", textAlign: "center", fontFamily: Fonts.reg, fontSize: 20, color: colors.LightGrey}} >{fileType}</Text>
+                        : <Text
+                            style={{ textTransform: "uppercase", height: "100%", width: "100%", textAlignVertical: "center", textAlign: "center", fontFamily: Fonts.reg, fontSize: 20, color: colors.LightGrey }} >
+                            {fileType.toLowerCase() == "pdf" && <AntDesign name="pdffile1" size={40} color={colors.DarkGrey} />}
+                            {fileType.toLowerCase() == "txt" && <AntDesign name="pptfile1" size={40} color={colors.DarkGrey} />}
+                            {fileType.toLowerCase() == "ppt" && <AntDesign name="exclefile1" size={40} color={colors.DarkGrey} />}
+                            {fileType.toLowerCase() == "xlsx" && <AntDesign name="exclefile1" size={40} color={colors.DarkGrey} />}
+                            {fileType.toLowerCase() == "docx" && <AntDesign name="wordfile1" size={40} color={colors.DarkGrey} />}
+                            {fileType.toLowerCase() == "rar" && <FontAwesome name="file-zip-o" size={40} color={colors.DarkGrey} />}
+                            {fileType.toLowerCase() == "zip" && <FontAwesome name="file-zip-o" size={40} color={colors.DarkGrey} />}
+                            {fileType.toLowerCase() == "doc" && <AntDesign name="wordfile1" size={40} color={colors.DarkGrey} />}
+                            
+                        </Text>
                     }
                 </View>
             </View>

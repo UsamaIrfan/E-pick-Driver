@@ -5,7 +5,7 @@ import { Entypo } from "../../../Constants"
 import { useSelector, useDispatch } from "react-redux";
 import Fonts from '../../../Theme/Fonts';
 import Loader from '../../../components/Loader';
-import { getDriverBookingsScheduled } from "../../../Store/action/Location";
+import { getDriverBookings } from "../../../Store/action/Location";
 
 const { height, width } = Dimensions.get("window")
 
@@ -29,7 +29,7 @@ const Completed = ({ navigation }) => {
 
     const getAllBookings = async () => {
         setIsLoading(true)
-        await dispatch(getDriverBookingsScheduled(userLoggedIn.userId))
+        await dispatch(getDriverBookings(userLoggedIn.userId))
         setIsLoading(false)
     }
 

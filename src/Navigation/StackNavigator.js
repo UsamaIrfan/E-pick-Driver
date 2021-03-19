@@ -14,6 +14,7 @@ import { StatusBar, View, Dimensions, Text } from "react-native";
 import ContentLoader, { Rect, Circle } from "react-content-loader/native";
 import Fonts from "../Theme/Fonts";
 import * as AuthActions from "../Store/action/login";
+import {startConnection} from "../Store/action/SignalR"
 
 const { width, height } = Dimensions.get("window");
 const Stack = createStackNavigator();
@@ -32,6 +33,7 @@ function MyStack() {
       const user = JSON.parse(userStorage);
       if (user.token != undefined && user.token != null) {
         setUserToken(user.token);
+        dispatch(startConnection(user.userId))
       }
       dispatch(AuthActions.Authenticate(user))
     }

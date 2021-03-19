@@ -13,6 +13,7 @@ import Toast from "react-native-simple-toast";
 import MapViewComponent from "../../components/MapView";
 import { setTravelData  } from "../../Store/action/Location";
 import Loader from "../../components/Loader";
+import {startConnection} from "../../Store/action/SignalR";
 
 const { width, height } = Dimensions.get("window")
 const aspect_ratio = width / height;
@@ -41,12 +42,14 @@ const Home = ({ navigation }) => {
     const userLoggedIn = useSelector(state => state.Auth.Login)
     const date = new Date();
 
-
     const setTrip = (from, to) => {
         setIsLoading(true)
         dispatch(setTravelData({ from, to }))
         setIsLoading(false)
     }
+
+    const hubConnection = useSelector(state => state.signalR.hubConnection)
+    console.log(hubConnection)
 
 
     async function load() {
@@ -93,21 +96,28 @@ const Home = ({ navigation }) => {
 
     useEffect(() => {
         load()
+        // startSignalRConnection()
     }, [])
-
+    
     const regionFrom = (lat, lon, accuracy) => {
         const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
         const circumference = (40075 / 360) * 1000;
-
+        
         const latDelta = accuracy * (1 / (Math.cos(lat) * circumference));
         const lonDelta = (accuracy / oneDegreeOfLongitudeInMeters);
-
+        
         return {
             latitude: lat,
             longitude: lon,
             latitudeDelta: Math.max(0, latDelta),
             longitudeDelta: Math.max(0, lonDelta)
         };
+    }
+
+    const startSignalRConnection = async () => {
+            setIsLoading(true)
+            await dispatch(startConnection(userLoggedIn.userId))
+            setIsLoading(false)
     }
 
     const GooglePlacesInput = (props) => {

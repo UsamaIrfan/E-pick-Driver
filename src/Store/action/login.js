@@ -12,12 +12,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-simple-toast";
 import { Api } from "../server";
 import axios from "axios";
+import {startConnection} from "./SignalR"
+import {useDispatch} from "react-redux"
 
 // Demo Token Creation
 const token = "1234567890";
 
 export const LoginUser = (email, password, Token, navigation) => {
   var postData = { email: email, password: password };
+
+  const dispatcher = useDispatch()
 
   return async (dispatch) => {
     await axios
@@ -32,6 +36,7 @@ export const LoginUser = (email, password, Token, navigation) => {
             type: LOGIN,
             Login: response.data,
           });
+          dispatcher(startConnection(response.data.userId))
           navigation.navigate("MapMain");
           saveDataToStorage({ ...response.data, token: Token });
         }

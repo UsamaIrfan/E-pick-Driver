@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, Share } from 'react-native'
+import { StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, Share, TextInput } from 'react-native'
 import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
 import { Ionicons, MaterialIcons, Entypo, FontAwesome5 } from "../../Constants"
@@ -9,11 +9,14 @@ const { height, width } = Dimensions.get("window")
 
 const DocInfo = ({ route, navigation }) => {
 
-    const { item } = route.params;
+    const { item, image, fileType } = route.params;
 
-    const shareMessage = (path, title) => {
+    const PdfReader = ({ url: uri }) => <WebView style={{ flex: 1 }} source={{ uri }} />
+
+    const shareMessage = (path, title,) => {
         // //Here is the Share API
         Share.share({
+            title: title,
             message: path.toString(),
             url: path,
         })
@@ -32,7 +35,7 @@ const DocInfo = ({ route, navigation }) => {
                 <TouchableOpacity activeOpacity={0.5}>
                     <MaterialIcons name="delete" size={30} color={colors.White} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => shareMessage(item.description)} activeOpacity={0.5}>
+                <TouchableOpacity onPress={() => shareMessage(item.path, item.name)} activeOpacity={0.5}>
                     <FontAwesome5 name="share-alt" size={22} color={colors.White} />
                 </TouchableOpacity>
             </View>
@@ -46,13 +49,22 @@ const DocInfo = ({ route, navigation }) => {
             } />
             <DocHeader />
             <View style={styles.scrollView}>
-                <View style={styles.docContainer}>
-                    <View style={styles.docTitle}>
-                        <Text style={styles.titleText}>Document</Text>
+                <View>
+                    <View style={styles.labelInput}>
+                        <Text style={styles.inputTitle}>Name</Text>
+                        <Text style={styles.docDetails} >{item.name}</Text>
                     </View>
-                    <ScrollView style={styles.descContainer}>
-                        <Text style={{ lineHeight: 20, fontFamily: Fonts.reg }}>{item.description}</Text>
-                    </ScrollView>
+                    <View style={styles.labelInput}>
+                        <Text style={styles.inputTitle}>File Type</Text>
+                        <Text style={styles.docDetails}>{item.documentTypeId}</Text>
+                    </View>
+                    {image ? <View style={styles.imageContainer}>
+                        <Image style={{ ...StyleSheet.absoluteFill, ...styles.docImage }} source={{ uri: item?.path }} />
+                    </View> :
+                        <View style={styles.imageContainer}>
+                            <Text style={{ fontSize: 45 ,backgroundColor: colors.LightGrey2, color: colors.DarkGrey, flex: 1, textAlignVertical: "center", textAlign: "center" }}>{fileType}</Text>
+                        </View>
+                    }
                 </View>
             </View>
         </View>
@@ -77,6 +89,7 @@ const styles = StyleSheet.create({
     scrollView: {
         backgroundColor: colors.BackgroundGrey,
         height: height * 0.81,
+        paddingHorizontal: width * 0.04,
     },
     headerContainer: {
         flexDirection: "row",
@@ -128,5 +141,34 @@ const styles = StyleSheet.create({
         paddingBottom: height * 0.05,
         borderBottomWidth: 1,
         borderColor: colors.LightGrey
-    }
+    },
+    inputTitle: {
+        fontFamily: Fonts.reg,
+        marginRight: 10,
+    },
+    labelInput: {
+        flexDirection: "row",
+        color: colors.DarkGrey,
+        borderBottomWidth: 2,
+        borderColor: colors.DarkGreen,
+        alignItems: "center",
+        marginVertical: height * 0.02,
+    },
+    docDetails: {
+        fontSize: width * 0.04,
+        color: colors.DarkGrey,
+        fontFamily: Fonts.reg,
+        flex: 1,
+    },
+    imageContainer: {
+        height: height * 0.5,
+        width: "100%",
+        borderWidth: 2,
+        borderColor: colors.DarkGreen,
+        marginTop: 10,
+    },
+    docImage: {
+        width: "100%",
+        ...StyleSheet.absoluteFill,
+    },
 })

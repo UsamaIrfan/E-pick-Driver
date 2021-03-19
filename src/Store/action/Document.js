@@ -35,7 +35,6 @@ export const getAllDocuments = (userId) => {
         headers: { "Content-Type": "application/json" },
       })
       .then((response) => {
-        console.log(response.data.data);
         Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
           dispatch({

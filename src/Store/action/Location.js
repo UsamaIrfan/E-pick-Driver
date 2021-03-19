@@ -45,32 +45,6 @@ export const addBooking = (customerId, bookingTime, pickupLocation, pickupLocati
 };
 
 
-export const getDriverBookingsScheduled = (userId) => {
-  return async (dispatch) => {
-    console.log(userId)
-    await axios
-      .get(
-        `${Api}/api/get-driver-bookings/${userId}?languageId=1?bookingStatus=0`,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      )
-      .then((response) => {
-        console.log(response.data.bookings);
-        Toast.showWithGravity("Bookings Updated", Toast.SHORT, Toast.TOP);
-        if (response.data.success == true) {
-          dispatch({
-            type: GET_DRIVER_BOOKINGS,
-            bookings: response.data.bookings,
-          });
-        }
-      })
-      .catch((error) => {
-        alert("error", error.response);
-      });
-  };
-};
-
 export const getDriverBookings = (userId) => {
   return async (dispatch) => {
     console.log(userId)
@@ -96,3 +70,4 @@ export const getDriverBookings = (userId) => {
       });
   };
 };
+
