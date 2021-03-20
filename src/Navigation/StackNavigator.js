@@ -33,7 +33,7 @@ function MyStack() {
       const user = JSON.parse(userStorage);
       if (user.token != undefined && user.token != null) {
         setUserToken(user.token);
-        dispatch(startConnection(user.userId))
+        await dispatch(startConnection(user.userId))
       }
       dispatch(AuthActions.Authenticate(user))
     }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Keyboard, StyleSheet, Text, View, Alert, TextInput, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard, StyleSheet, Text, View, Alert, TouchableOpacity, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import MapView from 'react-native-maps';
 import { Marker, } from 'react-native-maps';
 import Header from "../../components/Header";
@@ -7,13 +7,16 @@ import colors from "../../Theme/Colors";
 import * as Location from 'expo-location';
 import { useSelector, useDispatch } from "react-redux"
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { Ionicons, MaterialCommunityIcons, Entypo } from "../../Constants/index";
+import { Ionicons, MaterialCommunityIcons, Entypo, avatar } from "../../Constants/index";
 import Fonts from '../../Theme/Fonts';
 import Toast from "react-native-simple-toast";
 import MapViewComponent from "../../components/MapView";
-import { setTravelData  } from "../../Store/action/Location";
+import { setTravelData } from "../../Store/action/Location";
 import Loader from "../../components/Loader";
-import {startConnection} from "../../Store/action/SignalR";
+import { startConnection } from "../../Store/action/SignalR";
+import DropDownPicker from 'react-native-dropdown-picker';
+import { Avatar, TouchableRipple } from 'react-native-paper';
+import { DynamicColorIOS } from 'react-native';
 
 const { width, height } = Dimensions.get("window")
 const aspect_ratio = width / height;
@@ -31,13 +34,18 @@ const Home = ({ navigation }) => {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
     });
-    const [DestinationPoint, setDestinationPoint] = useState(null)
-    const [PickUpPoint, setPickUpPoint] = useState(null)
+    const [DestinationPoint, setDestinationPoint] = useState(null);
+    const [PickUpPoint, setPickUpPoint] = useState(null);
     const [Destination, setDestination] = useState({ geometry: { location: { lat: 25.1921465, long: 66.5949955 } } })
     const [errorMsg, setErrorMsg] = useState(null);
     const HomePlace = { description: "Home", geometry: { location: { lat: 33.6158004, lng: 72.8059198 } } }
     const HomeCheck = { description: "Work", geometry: { location: { lat: 25.1921465, lng: 66.5949955 } } }
-    const [IsLoading, setIsLoading] = useState(false)
+    const [IsLoading, setIsLoading] = useState(false);
+    const [SetTripObject, setSetTripObject] = useState();
+    const [VehicleType, setVehicleType] = useState();
+    const [PickConfirmed, setPickConfirmed] = useState(null);
+    const [RideConfirmed, setRideConfirmed] = useState();
+    const [BookingConfirmed, setBookingConfirmed] = useState();
 
     const userLoggedIn = useSelector(state => state.Auth.Login)
     const date = new Date();
@@ -96,16 +104,15 @@ const Home = ({ navigation }) => {
 
     useEffect(() => {
         load()
-        // startSignalRConnection()
     }, [])
-    
+
     const regionFrom = (lat, lon, accuracy) => {
         const oneDegreeOfLongitudeInMeters = 111.32 * 1000;
         const circumference = (40075 / 360) * 1000;
-        
+
         const latDelta = accuracy * (1 / (Math.cos(lat) * circumference));
         const lonDelta = (accuracy / oneDegreeOfLongitudeInMeters);
-        
+
         return {
             latitude: lat,
             longitude: lon,
@@ -115,9 +122,9 @@ const Home = ({ navigation }) => {
     }
 
     const startSignalRConnection = async () => {
-            setIsLoading(true)
-            await dispatch(startConnection(userLoggedIn.userId))
-            setIsLoading(false)
+        setIsLoading(true)
+        await dispatch(startConnection(userLoggedIn.userId))
+        setIsLoading(false)
     }
 
     const GooglePlacesInput = (props) => {
@@ -143,10 +150,12 @@ const Home = ({ navigation }) => {
                             Toast.showWithGravity("Please provide Pick Up location", Toast.SHORT, Toast.BOTTOM)
                         } else {
                             setTrip(PickUpPoint, { details: details, data: data, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta })
+                            setSetTripObject(PickUpPoint, { details: details, data: data, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta })
                         }
                     }
                 }}
                 query={{
+                    // Add a "M" at the end to get the API working
                     key: 'AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcp',
                     language: 'en',
                     types: "(cities)"
@@ -200,6 +209,101 @@ const Home = ({ navigation }) => {
                                 <Text style={styles.startText} >Start</Text>
                             </View>
                         </View>
+                        {SetTripObject && <View style={styles.bottomMapOptions}>
+                            {BookingConfirmed &&
+                                <>
+                                    <View style={{ justifyContent: "flex-end", flexDirection: "row", width: width * 0.8 }}>
+                                        <TouchableOpacity onPress={() => {
+                                            setBookingConfirmed(false)
+                                            setRideConfirmed(false)
+                                            setPickConfirmed(false)
+                                        }}>
+                                            <Text style={{fontFamily: Fonts.reg, color: colors.Red, fontSize: 15,}}>Cancel</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View style={styles.driverDetails}>
+                                        <View style={{ width: "100%" }}>
+                                            <Text style={{ textAlign: "center", ...styles.buttonText, color: colors.DarkGreen, fontSize: 13, }}>Customer Details</Text>
+                                        </View>
+                                        <View style={{ flexDirection: "row", width: "100%", alignItems: "center" }}>
+                                            <View style={{ flexDirection: 'row', alignItems: "center", flex: 1, }}>
+                                                <Avatar.Image source={avatar} size={55} style={{ marginRight: 10 }} />
+                                                <View>
+                                                    <Text style={{ ...styles.buttonText, color: colors.DarkGreen, fontSize: 13, }}>Ahmed</Text>
+                                                    <Text style={{ ...styles.buttonText, color: colors.DarkGreen, fontSize: 13, }}>Karachi Central, Malir, Karachi</Text>
+                                                </View>
+                                            </View>
+                                            <View style={{ justifyContent: 'center', alignItems: "center", height: "100%", flexDirection: "row", flex: 1, justifyContent: 'flex-end', marginLeft: 10, }}>
+                                                <TouchableOpacity style={{ justifyContent: 'center',width: 40, height: 40, borderRadius: 20, }}>
+                                                    <Ionicons style={{textAlign: "center"}} name="call" size={24} color={colors.DarkGreen} />
+                                                </TouchableOpacity>
+
+                                                <TouchableOpacity style={{ justifyContent: 'center',width: 40, height: 40, borderRadius: 20, }}>
+                                                    <Ionicons style={{textAlign: "center"}} name="chatbubble" size={24} color={colors.DarkGreen} />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </>}
+                            {RideConfirmed && !BookingConfirmed && <View style={styles.driverDetails}>
+                                <View style={{ width: "100%" }}>
+                                    <Text style={{ textAlign: "center", ...styles.buttonText, color: colors.DarkGreen, fontSize: 13, }}>Customer Details</Text>
+                                </View>
+                                <View style={{ flexDirection: "row", width: "100%", alignItems: "center" }}>
+                                    <Avatar.Image source={avatar} size={55} style={{ marginRight: 10 }} />
+                                    <View>
+                                        <Text style={{ ...styles.buttonText, color: colors.DarkGreen, fontSize: 13, }}>Ahmed</Text>
+                                        <Text style={{ ...styles.buttonText, color: colors.DarkGreen, fontSize: 13, }}>Karachi Central, Malir, Karachi</Text>
+                                    </View>
+                                </View>
+                            </View>}
+                            {!PickConfirmed && <DropDownPicker
+                                items={[
+                                    { label: 'Executive', value: "Executive", },
+                                    { label: 'Normal', value: 'Normal', },
+                                ]}
+
+                                // items={vehicles?.map((item, i) => {
+                                //     return {
+                                //         label: item.text.toString(),
+                                //         value: item.value,
+                                //     }
+                                // })}
+                                placeholder={<Text style={{ fontSize: 15, color: colors.DarkGreen, fontFamily: Fonts.bold, }}>Please Select your Ride</Text>}
+                                containerStyle={{ height: 40 }}
+                                style={{ zIndex: 10, borderRadius: 0, backgroundColor: colors.White, width: width * 0.8, }}
+                                itemStyle={{
+                                    justifyContent: 'flex-start',
+                                    fontFamily: Fonts.reg,
+                                    color: colors.DarkGreen,
+                                }}
+                                dropDownStyle={{ alignSelf: "flex-start", fontFamily: Fonts.reg, backgroundColor: colors.White, fontFamily: Fonts.reg, width: width * 0.8 }}
+                                onChangeItem={item => {
+                                    setVehicleType(item)
+                                }}
+                            />}
+                            {PickConfirmed && <View style={styles.pickConfirmed}>
+                                <Text style={styles.pickConfirmedText}>{VehicleType.label}</Text>
+                                <Text style={styles.pickConfirmedText}>Fare: Rs 2000/-</Text>
+                            </View>}
+                            {BookingConfirmed && <View style={{ flexDirection: "row", width: width * 0.8, justifyContent: "space-between", alignItems: "center" }}>
+                                <TouchableRipple rippleColor={colors.DarkGrey} activeOpacity={.6} onPress={() => { }} style={{ ...styles.bookNowButton, flex: 1, }}>
+                                    <Text style={{ ...styles.buttonText }}>Lets Go</Text>
+                                </TouchableRipple>
+                            </View>}
+                            {!RideConfirmed && <TouchableRipple rippleColor={colors.DarkGrey} activeOpacity={.6} onPress={() => { !PickConfirmed ? setPickConfirmed(true) : setRideConfirmed(true) }} style={{ ...styles.buttonLogin }}>
+                                <Text style={{ ...styles.buttonText }}>Confirm Pick Up</Text>
+                            </TouchableRipple>}
+                            {RideConfirmed && !BookingConfirmed && <View style={{ flexDirection: "row", width: width * 0.8, justifyContent: "space-between", alignItems: "center" }}>
+                                <TouchableRipple rippleColor={colors.DarkGrey} activeOpacity={.6} onPress={() => { setBookingConfirmed(true) }} style={{ ...styles.bookNowButton, flex: .5, }}>
+                                    <Text style={{ ...styles.buttonText }}>Start Ride</Text>
+                                </TouchableRipple>
+                                <TouchableRipple rippleColor={colors.DarkGrey} activeOpacity={.6} onPress={() => { setRideConfirmed(false); setBookingConfirmed(false); setPickConfirmed(false) }} style={{ ...styles.bookNowButton, flex: .45, backgroundColor: colors.Red }}>
+                                    <Text style={{ ...styles.buttonText }}>Cancel</Text>
+                                </TouchableRipple>
+                            </View>}
+                        </View>}
+
                         {Region && <MapViewComponent region={Region} />}
                     </View>
                 </TouchableWithoutFeedback>
@@ -271,7 +375,63 @@ const styles = StyleSheet.create({
     },
     startText: {
         fontFamily: Fonts.reg,
-    }
+    },
+    buttonText: {
+        color: colors.White,
+        fontSize: 18,
+        textTransform: "none",
+        fontFamily: Fonts.reg,
+    },
+    buttonsContainer: {
+        flex: 1,
+        paddingVertical: 10,
+        marginTop: height * 0.05
+    },
+    buttonLogin: {
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 0,
+        marginTop: 10,
+        marginBottom: height * 0.05,
+        paddingVertical: height * 0.015,
+        textTransform: "none",
+        backgroundColor: colors.DarkGreen,
+        width: width * 0.8,
+    },
+    bookNowButton: {
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 0,
+        marginTop: 10,
+        marginBottom: height * 0.05,
+        paddingVertical: height * 0.015,
+        textTransform: "none",
+        backgroundColor: colors.DarkGreen,
+    },
+    bottomMapOptions: {
+        position: "absolute",
+        bottom: 0,
+        width: "100%",
+        alignItems: "center",
+    },
+    pickConfirmed: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        backgroundColor: colors.White,
+        padding: height * 0.015,
+        width: width * 0.8,
+    },
+    pickConfirmedText: {
+        fontFamily: Fonts.reg,
+        fontSize: 14,
+    },
+    driverDetails: {
+        width: width * 0.8,
+        backgroundColor: colors.White,
+        padding: height * 0.015,
+        alignItems: "center",
+        marginBottom: 10,
+    },
 })
 
 

@@ -108,7 +108,9 @@ const BottomTabNavigator = ({ navigation }) => {
           // },
           tabBarIcon: (props) => (
             <TouchableOpacity
-              style={{}}
+              style={{
+                zIndex: 1,
+              }}
               activeOpacity={1}
               onPress={(e) => {
                 e.preventDefault();
