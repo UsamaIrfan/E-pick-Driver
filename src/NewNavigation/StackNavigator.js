@@ -147,7 +147,7 @@ function MyStack() {
             textAlign: "center",
           }}
         >
-          V.1.0.8
+          V.1.0.9
           </Text>
       </View>
     );
