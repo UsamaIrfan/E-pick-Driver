@@ -103,8 +103,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 0,
+    marginBottom: height * 0.05,
+    paddingVertical: height * 0.02,
+    textTransform: "none",
     backgroundColor: colors.DarkGreen,
-    height: height * 0.06,
+    borderRadius: 8,
   },
   buttonText: {
     color: colors.White,
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 20,
-    borderRadius: 0,
+    borderRadius: 8,
   },
   buttonCapText: {
     color: colors.White,

@@ -4,12 +4,14 @@ import { DefaultTheme as NavigationDefaultTheme } from "@react-navigation/native
 
 const Colors = {
   DarkGrey : "#515151",
-  DarkGreen : "#000000",
-  BackgroundGrey : "#EDEEE8",
+  DarkGreen : "#36547D",
+  BackgroundGrey : "#e6e6e6",
+  LightGray3: "#D6D7D7",
   LightGrey : "#98989B",
   LightGrey2 : "#C3C3CE",
   White : "#ffffff",
-  Red : "red",
+  Red : "#BE171C",
+  gradientArray: ['#456ba1', '#3d5f8f', '#36547D',]
 }
 
 const NavigationTheme = {

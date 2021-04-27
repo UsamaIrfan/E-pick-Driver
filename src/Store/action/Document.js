@@ -1,7 +1,7 @@
 import { GET_ALL_DOCUMENTS, GET_ALL_DOCUMENT_TYPES } from "../actionTypes";
-import Toast from "react-native-simple-toast";
 import { Api } from "../server";
 import axios from "axios";
+import { showMessage } from "react-native-flash-message";
 
 export const getAllDocumentsTypes = () => {
   return async (dispatch) => {
@@ -11,7 +11,6 @@ export const getAllDocumentsTypes = () => {
       })
       .then((response) => {
         console.log(response.data.data);
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
           dispatch({
             type: GET_ALL_DOCUMENT_TYPES,
@@ -22,20 +21,21 @@ export const getAllDocumentsTypes = () => {
         }
       })
       .catch((error) => {
-        alert("error", error.response);
+        console.log("DOCUMENTS API ERROR", error.message)
       });
   };
 };
 
 
 export const getAllDocuments = (userId) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
+    const Id = getState().Auth.userId
+    console.log(userId)
     await axios
-      .get(`${Api}/api/get-customer-documents/6d7e6a77-2d11-4cb2-a209-a13c3caf4377?languageId=1`, {
+      .get(`${Api}/api/get-customer-documents/${userId}?languageId=1`, {
         headers: { "Content-Type": "application/json" },
       })
       .then((response) => {
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
           dispatch({
             type: GET_ALL_DOCUMENTS,
@@ -46,31 +46,33 @@ export const getAllDocuments = (userId) => {
         }
       })
       .catch((error) => {
-        alert("error", error.response);
+        console.log("GET ALL DOCS ERROR ", error.message)
+        // alert("error", error.response);
       });
   };
 };
 
-export const addCustomerDocument = (userId, filename, docType, uri, docTypeId) => {
-    var postData = {
-        userId: userId,
-        name: filename,
-        type: docType,
-        uri: uri,
-        appFileId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-        documentTypeId: docTypeId
-    };
-    return async (dispatch) => {
-        await axios
-          .post(`${Api}/api/add-customer-document?languageId=1`, postData, {
-            headers: { "Content-Type": "application/json" },
-          })
-          .then((response) => {
-            console.log("Response ==>" ,response.data);
-            Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
-          })
-          .catch((error) => {
-            alert("error", error.response);
-          });
-      };
+export const addCustomerDocument = (userId, filename, docType, uri, docTypeId, navigation) => {
+  var postData = {
+    userId: userId,
+    name: filename,
+    type: docType,
+    uri: uri,
+    appFileId: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    documentTypeId: docTypeId
   };
+  return async (dispatch) => {
+    await axios
+      .post(`${Api}/api/add-customer-document?languageId=1`, postData, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((response) => {
+        console.log("Response ==>", response.data);
+        showMessage({message: "Document Uploaded", type: "success"})
+        navigation.goBack()
+      })
+      .catch((error) => {
+        console.log("DOCUMENTS API ERROR", error.message)
+      });
+  };
+};

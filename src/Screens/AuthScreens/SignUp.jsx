@@ -1,23 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { StyleSheet, Text, View, Image, StatusBar, Dimensions, TouchableWithoutFeedback, TouchableOpacity, TextInput, Button, Platform , KeyboardAvoidingView } from 'react-native'
+import React, { useState, createRef, useEffect } from 'react'
+import { StyleSheet, Text, View, Image, StatusBar, Dimensions, ScrollView, TouchableOpacity, TextInput, LayoutAnimation, Platform, UIManager } from 'react-native'
 import colors from "../../Theme/Colors";
-import { FontAwesome, MaterialIcons, Entypo, Ionicons, AuthScreenLogo } from "../../Constants/index";
+import { FontAwesome, MaterialIcons, Entypo, Ionicons, AuthScreenLogo, Feather, FontAwesome5 } from "../../Constants/index";
 import Fonts from '../../Theme/Fonts';
 import * as signUpActions from "../../Store/action/login";
 import Loader from "../../components/Loader";
-import Toast from "react-native-simple-toast";
 import { useSelector, useDispatch } from "react-redux";
-import DropDownPicker from 'react-native-dropdown-picker';
 
-// const theme = {
-//     ...DefaultTheme,
-//     roundness: 2,
-//     colors: {
-//         ...DefaultTheme.colors,
-//         primary: '#3498db',
-//         accent: '#f1c40f',
-//     }
-// };
 const { height, width } = Dimensions.get("window")
 
 export default function SignUp({ navigation }) {
@@ -31,6 +20,17 @@ export default function SignUp({ navigation }) {
     const [vehicleId, setVehicleId] = useState(null);
 
     const dispatch = useDispatch()
+
+    // Drop Down Expand Logic
+    const [expanded, setExpanded] = useState(false);
+    const toggleExpand = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setExpanded(!expanded);
+    };
+
+    if (Platform.OS === "android") {
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -47,10 +47,10 @@ export default function SignUp({ navigation }) {
     }
 
     const authenticateHandler = async () => {
-        if (Email !== '' && Password !== '' && FirstName !== '' && LastName !== '' && Mobile !== '' && vehicleId !== '') {
+        if (Email != '' && Password != '' && FirstName != '' && LastName != '' && Mobile != '' && vehicleId != '' && Email && Password && FirstName && LastName && Mobile && vehicleId) {
             try {
                 setIsLoading(true);
-                await dispatch(signUpActions.SignUpUser(Email, Password, FirstName, LastName, Mobile, vehicleId, navigation));
+                await dispatch(signUpActions.SignUpUser(Email, Password, FirstName, LastName, Mobile, Number(vehicleId.value), navigation));
                 setIsLoading(false);
             } catch (err) {
                 setIsLoading(false);
@@ -61,12 +61,10 @@ export default function SignUp({ navigation }) {
 
     const vehicles = useSelector(state => state.Auth.Vehicles)
 
-    console.log("Vehicl ==> ", vehicles)
-
-    const input2 = useRef();
-    const input3 = useRef();
-    const input4 = useRef();
-    const input5 = useRef();
+    const input2 = createRef();
+    const input3 = createRef();
+    const input4 = createRef();
+    const input5 = createRef();
 
     return (
         <View style={styles.container}>
@@ -74,61 +72,82 @@ export default function SignUp({ navigation }) {
             <View style={styles.logoContainer}>
                 <Image style={styles.logo} source={AuthScreenLogo} />
             </View>
-            <View  style={styles.inputsContainer}>
+            <ScrollView style={styles.inputsContainer}>
                 <View style={styles.heading}>
                     <Text style={styles.headingText}>Register</Text>
                 </View>
                 <View
-                 style={styles.inputFieldContainer}
-                 behavior={Platform.OS === "ios" ? "padding" : "height"}
-                 >
+                    style={styles.inputFieldContainer}
+                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                >
                     <View style={styles.inputContainer}>
                         <Ionicons style={styles.inputIcon} name="person" size={18} color={colors.DarkGrey} />
-                        <TextInput returnKeyType="next" onSubmitEditing={() => input2.current.focus()} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setFirstName(text)} placeholder="First Name" />
+                        <TextInput blurOnSubmit={false} returnKeyType="next" onSubmitEditing={() => input2.current.focus()} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setFirstName(text)} placeholder="First Name" />
                     </View>
                     <View style={styles.inputContainer}>
                         <Ionicons style={styles.inputIcon} name="person" size={18} color={colors.DarkGrey} />
-                        <TextInput returnKeyType="next" onSubmitEditing={() => input3.current.focus()} ref={input2} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={text => (setLastName(text))} placeholder="Last Name" />
+                        <TextInput blurOnSubmit={false} returnKeyType="next" onSubmitEditing={() => input3.current.focus()} ref={input2} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={text => (setLastName(text))} placeholder="Last Name" />
                     </View>
                     <View style={styles.inputContainer}>
                         <FontAwesome style={styles.inputIcon} name="phone" size={18} color={colors.DarkGrey} />
-                        <TextInput returnKeyType="next" onSubmitEditing={() => input4.current.focus()} ref={input3} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setMobile(text)} placeholder="Phone Number" />
+                        <TextInput blurOnSubmit={false} returnKeyType="next" onSubmitEditing={() => input4.current.focus()} ref={input3} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setMobile(text)} placeholder="Phone Number" />
                     </View>
                     <View style={styles.inputContainer}>
                         <Entypo style={styles.inputIcon} name="mail" size={18} color={colors.DarkGrey} />
-                        <TextInput returnKeyType="next" onSubmitEditing={() => input5.current.focus()} ref={input4} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setEmail(text)} placeholder="Email" />
+                        <TextInput blurOnSubmit={false} returnKeyType="next" onSubmitEditing={() => input5.current.focus()} ref={input4} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setEmail(text)} placeholder="Email" />
                     </View>
                     <View style={styles.inputContainer}>
                         <MaterialIcons style={styles.inputIcon} name="lock" size={18} color={colors.DarkGrey} />
-                        <TextInput secureTextEntry={true} style={styles.defaultInput} underlineColor={colors.DarkGreen} ref={input5} onChangeText={(text) => setPassword(text)} placeholder="Password" />
+                        <TextInput onSubmitEditing={() => toggleExpand()} blurOnSubmit={false} secureTextEntry={true} style={styles.defaultInput} underlineColor={colors.DarkGreen} ref={input5} onChangeText={(text) => setPassword(text)} placeholder="Password" />
                     </View>
-                    {vehicles && <DropDownPicker
-                        items={[
-                            {label: 'UK', value: 'uk', },
-                            {label: 'France', value: 'france', },
-                        ]}
+                    <View>
+                        <TouchableOpacity
+                            activeOpacity={0.2}
+                            style={{
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                borderColor: colors.DarkGreen,
+                                borderWidth: 1,
+                                padding: 10,
+                                paddingVertical: 15,
+                                borderRadius: 10,
+                                marginTop: 10,
+                                marginBottom: 10,
+                            }}
+                            onPress={() => toggleExpand()}
+                        >
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <Text style={{ fontSize: 15, color: colors.DarkGreen, marginLeft: 5, fontFamily: Fonts.reg }}>
+                                    {vehicleId ? vehicleId.text : "Select Vehicle"}
+                                </Text>
+                            </View>
 
-                        items={vehicles?.map((item, i) => {
-                            return {
-                                label: item.text.toString(),
-                                value: item.value,
-                            }
-                        })}
-                        defaultValue={vehicles[0].value}
-                        containerStyle={{ height: 40 }}
-                        style={{ backgroundColor: colors.BackgroundGrey, }}
-                        // itemStyle={{
-                        //     justifyContent: 'flex-start'
-                        // }}
-                        dropDownStyle={{ backgroundColor: colors.BackgroundGrey, fontFamily: Fonts.reg }}
-                        onChangeItem={item => {
-                            setVehicleId(parseInt(item.value));
-                        }}
-                    />}
+                            <FontAwesome5
+                                name={expanded ? "chevron-up" : "chevron-down"}
+                                size={20}
+                                color={colors.DarkGreen}
+
+
+                            />
+                        </TouchableOpacity>
+
+                        {expanded && vehicles.map((item, idx) => (
+                            <TouchableOpacity onPress={() => { setVehicleId(item); toggleExpand() }} activeOpacity={.5} key={idx} style={{ padding: 10 }}>
+                                <Text style={{ fontFamily: Fonts.reg, fontSize: 14, color: colors.DarkGreen }}>{item.text}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 </View>
                 <View style={styles.buttonsContainer}>
                     <View>
-                        <Button color={colors.DarkGreen} title="Register" style={styles.buttonLogin} onPress={authenticateHandler} />
+                        <TouchableOpacity
+                            activeOpacity={0.6}
+                            onPress={() => authenticateHandler()}
+                            style={{ ...styles.buttonLogin }}
+                        >
+                            <Text style={{ ...styles.buttonText }}>Register</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")} activeOpacity={.6} style={styles.footerLinks}>
                             <Text style={{ ...styles.footerText, ...styles.forgetText, color: colors.DarkGreen, }}>Forget Password?</Text>
                         </TouchableOpacity>
@@ -140,9 +159,9 @@ export default function SignUp({ navigation }) {
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-            {IsLoading && <Loader />}
-        </View>
+            </ScrollView>
+            { IsLoading && <Loader />}
+        </View >
     )
 }
 
@@ -152,7 +171,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.BackgroundGrey
     },
     logoContainer: {
-        flex: 1,
+        flex: .3,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -207,6 +226,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 0,
+        marginBottom: height * 0.05,
+        paddingVertical: height * 0.02,
+        textTransform: "none",
+        backgroundColor: colors.DarkGreen,
+        borderRadius: 8,
     },
     buttonText: {
         color: colors.White,
@@ -223,6 +247,7 @@ const styles = StyleSheet.create({
     footerLinks: {
         flexDirection: 'row',
         justifyContent: "center",
+        marginTop: 10,
     },
     footerText: {
         fontFamily: Fonts.reg,

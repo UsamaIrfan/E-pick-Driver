@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from "react-redux";
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, FlatList } from 'react-native'
 import colors from "../../../Theme/Colors";
 import { Entypo } from "../../../Constants"
 import Fonts from '../../../Theme/Fonts';
@@ -15,6 +15,17 @@ const Schedule = ({ navigation }) => {
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
+            setIsLoading(true)
+            getAllBookings()
+            setIsLoading(false)
+        });
+
+        return unsubscribe;
+    }, []);
+
+    
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
             getAllBookings()
         });
 
@@ -27,9 +38,7 @@ const Schedule = ({ navigation }) => {
     const [IsLoading, setIsLoading] = useState(false)
 
     const getAllBookings = async () => {
-        setIsLoading(true)
         await dispatch(getDriverBookings(userLoggedIn.userId))
-        setIsLoading(false)
     }
 
 
@@ -41,11 +50,11 @@ const Schedule = ({ navigation }) => {
             <View style={{ marginLeft: "5%", flex: 1, justifyContent: "space-between", height: "100%" }}>
                 <View>
                     <Text style={{ fontFamily: Fonts.reg, fontSize: width * 0.035, color: colors.LightGrey }}>From</Text>
-                    <Text style={{ color: colors.DarkGreen, fontFamily: Fonts.reg, fontSize: width * 0.035 }}>{item.pickupLocation.length > 20 ? item.pickupLocation.slice(0, 20) : item.pickupLocation}</Text>
+                    <Text numberOfLines={1} style={{ color: colors.DarkGreen, fontFamily: Fonts.reg, fontSize: width * 0.035, width: width * 0.45 }}>{item.pickupLocation}</Text>
                 </View>
                 <View>
                     <Text style={{ fontFamily: Fonts.reg, fontSize: width * 0.035, color: colors.LightGrey }}>Destination</Text>
-                    <Text style={{ color: colors.DarkGreen, fontFamily: Fonts.reg, fontSize: width * 0.035 }}>{item.destination.length > 25 ? item.destination.slice(0, 25) : item.destination}</Text>
+                    <Text numberOfLines={1} style={{ color: colors.DarkGreen, fontFamily: Fonts.reg, fontSize: width * 0.035, width: width * 0.45 }}>{item.destination}</Text>
                 </View>
             </View>
             <View style={{ justifyContent: "space-between", height: "100%" }}>
@@ -62,9 +71,12 @@ const Schedule = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            {bookings.map((item, i) => (
-                <List item={item} key={i} />
-            ))}
+            <FlatList 
+                data={bookings}
+                renderItem={List}
+                keyExtractor={(itm, idx) => idx.toString()}
+                ListEmptyComponent={() => (<Text style={styles.noBookings} >No Bookings</Text>)}
+            />
             {IsLoading && <Loader />}
         </View>
     )
@@ -77,4 +89,13 @@ const styles = StyleSheet.create({
         backgroundColor: colors.BackgroundGrey,
         flex: 1,
     },
+    noBookings: {
+        textAlignVertical: "center",
+        textAlign: "center",
+        flex: 1,
+        height: height * 0.8,
+        fontSize: 20,
+        fontFamily: Fonts.bold,
+        color: colors.DarkGrey
+    }
 })

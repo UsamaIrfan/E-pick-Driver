@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
         paddingVertical: height * 0.02,
         textTransform: "none",
         backgroundColor: colors.DarkGreen,
+        borderRadius: 8,
     },
     sepLineContainer: {
         flexDirection: "row",

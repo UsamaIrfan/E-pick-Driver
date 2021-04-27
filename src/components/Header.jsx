@@ -15,7 +15,9 @@ const Header = ({ name, style , icon}) => {
                 <Text style={styles.headerText}>{name}</Text>
             </View>
             <View style={styles.rightContent}>
-                <Image source={AuthScreenLogo} style={styles.headerLogo} />
+                <View style={styles.headerLogo}>
+                    <Image source={AuthScreenLogo} style={styles.headerLogoImg} />
+                </View>
                 <Ionicons name="ios-information-circle" size={24} color={colors.LightGrey} />
             </View>
         </View>
@@ -53,5 +55,10 @@ const styles = StyleSheet.create({
         width: width * 0.18,
         height: height * 0.15,
         marginRight: width * 0.015
+    },
+    headerLogoImg: {
+        ...StyleSheet.absoluteFill,
+        width: "100%",
+        height: "100%",
     },
 })

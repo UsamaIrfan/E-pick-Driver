@@ -2,16 +2,8 @@ import { GET_DRIVER_BOOKINGS, GET_LOCATION, SET_TRAVEL_LOCATION } from "../actio
 
 const initialState = {
   location: {},
-  travel: {},
-  bookings: [{
-    driverName: null,
-    clientName: "",
-    vehicleName: "",
-    bookingTime: "",
-    pickupLocation: "",
-    destination: "",
-    status: "Pending"
-  },]
+  travel: null,
+  bookings: []
 };
 
 export default (state = initialState, action) => {

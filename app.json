@@ -24,6 +24,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBnIEo7jIZH3JVD3a7g8woDl6VAvvzdnfg"
+        }
+      },
       "package": "com.epick.epick_driver"
     },
     "web": {

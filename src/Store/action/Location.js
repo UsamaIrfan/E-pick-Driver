@@ -3,12 +3,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { Api } from "../server";
 import axios from "axios";
-import Toast from "react-native-simple-toast";
-import { ActionSheetIOS } from "react-native";
+import {showMessage} from "react-native-flash-message";
 
 export const setTravelData = (travel) => {
   return async (dispatch) => {
-    console.log("TRAVEL (Reducer) ==>", travel);
+    // console.log("TRAVEL (Reducer) ==>", travel);
     dispatch({
       type: SET_TRAVEL_LOCATION,
       travel: travel,
@@ -36,9 +35,10 @@ export const addBooking = (customerId, bookingTime, pickupLocation, pickupLocati
       })
       .then((response) => {
         console.log(response.data);
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+        showMessage({ message: "Booking Inserted.", type: "success" })
       })
       .catch((error) => {
+        showMessage({ message: "Unable to Insert booking..", type: "info" })
         alert("error", error.response);
       });
   };
@@ -57,7 +57,6 @@ export const getDriverBookings = (userId) => {
       )
       .then((response) => {
         console.log(response.data.bookings);
-        Toast.showWithGravity("Bookings Updated", Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
           dispatch({
             type: GET_DRIVER_BOOKINGS,

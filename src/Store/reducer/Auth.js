@@ -15,8 +15,30 @@ const initialState = {
     userId: null,
     userName: null,
   },
-  Vehicles: {},
-  userInfo: {},
+  Vehicles: [{
+    disabled: null,
+    group: null,
+    selected: null,
+    text: null,
+    value: null
+  }],
+  userInfo: {
+    success: null,
+    phoneNumber: null,
+    firstName: null,
+    email: null,
+    middleName: null,
+    lastName: null,
+    address: null,
+    city: null,
+    province: null,
+    postalCode: null,
+    driversLicenseNumber: null,
+    driversLicenseExpiryDate: null,
+    insuranceCompany: null,
+    insuranceNumber: null,
+    insuranceExpiryDate: null
+  },
 };
 
 export default (state = initialState, action) => {

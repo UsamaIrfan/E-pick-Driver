@@ -1,6 +1,5 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
-import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
 import { Ionicons, MaterialIcons, Octicons, Entypo } from "../../Constants"
 import Fonts from '../../Theme/Fonts';
@@ -142,14 +141,6 @@ const Chats = ({navigation}) => {
 
     return (
         <View style={{ backgroundColor: colors.BackgroundGrey }}>
-            <Header
-                name={"Chats"}
-                icon={<Ionicons
-                    name="ios-chatbubbles"
-                    color={colors.White}
-                    size={24}
-                />}
-            />
             <ChatHeader />
             <ScrollView style={styles.scrollView}>
                 {DATA.map((item, i) => (

@@ -1,14 +1,14 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { Text, View, StyleSheet, Dimensions, Image } from "react-native";
-// import {set_data} from './src/Store/action';
 import colors from "./src/Theme/Colors";
-import { Button as PaperButton } from 'react-native-paper';
-import Navigator from "./src/Navigation/StackNavigator";
+import Navigator from "./src/NewNavigation/StackNavigator";
 import { Provider } from "react-redux";
 import store from "./src/Store";
 import AppLoading from 'expo-app-loading';
 import { useFonts } from 'expo-font';
+import FlashMessage from "react-native-flash-message";
+import { StatusBar } from 'react-native';
 
 const { height, width } = Dimensions.get("window")
 
@@ -27,7 +27,9 @@ function App() {
   } else {
     return (
       <Provider store={store}>
+        <StatusBar backgroundColor={colors.DarkGreen} dark={true} />
         <Navigator />
+        <FlashMessage />
       </Provider>
     );
   }

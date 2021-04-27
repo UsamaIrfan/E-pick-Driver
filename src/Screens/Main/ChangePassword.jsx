@@ -1,7 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React, { useRef, useState } from 'react'
 import { StyleSheet, Text, View, TextInput, Dimensions, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
-import Header from "../../components/Header";
 import Loader from "../../components/Loader";
 import { useSelector, useDispatch } from "react-redux"
 import { MaterialIcons, Entypo } from "../../Constants"
@@ -27,7 +26,7 @@ const ChangePassword = ({ navigation }) => {
     const passwordChangehandler = async (userId, oldPass, newPass, confirmPass) => {
         if (oldPass != "" && newPass != oldPass && newPass != "" && newPass == confirmPass) {
             setIsLoading(true)
-            await dispatch(changePassword(userId, oldPass, newPass))
+            await dispatch(changePassword(userId, oldPass, newPass, navigation))
             setIsLoading(false)
         }
 
@@ -35,20 +34,19 @@ const ChangePassword = ({ navigation }) => {
 
     return (
         <KeyboardAvoidingView style={styles.container}>
-            <Header name="Reset Password" icon={<MaterialIcons name="lock" size={24} color={colors.White} />} />
 
             <View style={styles.inputFieldContainer}>
                 <View style={styles.inputContainer}>
                     <MaterialIcons style={styles.inputIcon} name="lock" size={18} color={colors.DarkGrey} />
-                    <TextInput secureTextEntry={true} returnKeyType="next" onSubmitEditing={() => input2.current.focus()} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setOldPassword(text)} placeholder="Old Password" />
+                    <TextInput secureTextEntry={true} returnKeyType="next" blurOnSubmit={false} onSubmitEditing={() => input2.current.focus()} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setOldPassword(text)} placeholder="Old Password" />
                 </View>
                 <View style={styles.inputContainer}>
                     <MaterialIcons style={styles.inputIcon} name="lock" size={18} color={colors.DarkGrey} />
-                    <TextInput secureTextEntry={true} returnKeyType="next" onSubmitEditing={() => input3.current.focus()} ref={input2} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setNewPassword(text)} placeholder="New Password" />
+                    <TextInput secureTextEntry={true} returnKeyType="next" blurOnSubmit={false} onSubmitEditing={() => input3.current.focus()} ref={input2} style={styles.defaultInput} underlineColor={colors.DarkGreen} onChangeText={(text) => setNewPassword(text)} placeholder="New Password" />
                 </View>
                 <View style={styles.inputContainer}>
                     <MaterialIcons style={styles.inputIcon} name="lock" size={18} color={colors.DarkGrey} />
-                    <TextInput secureTextEntry={true} style={styles.defaultInput} onSubmitEditing={() => navigation.navigate("TabNavigator")} underlineColor={colors.DarkGreen} ref={input3} onChangeText={(text) => setRePassword(text)} placeholder="Confirm Password" />
+                    <TextInput secureTextEntry={true} style={styles.defaultInput} onSubmitEditing={() => passwordChangehandler(userId, OldPassword, NewPassword, RePassword)} underlineColor={colors.DarkGreen} ref={input3} onChangeText={(text) => setRePassword(text)} placeholder="Confirm Password" />
                 </View>
                 <TouchableOpacity onPress={() => passwordChangehandler(userId, OldPassword, NewPassword, RePassword)} activeOpacity={0.5} style={styles.buttonLogin}>
                     <Text style={styles.buttonText}>Reset Password</Text>
@@ -92,12 +90,15 @@ const styles = StyleSheet.create({
         paddingRight: width * 0.02,
     },
     buttonLogin: {
+        marginTop: 10,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 0,
+        marginBottom: height * 0.05,
+        paddingVertical: height * 0.02,
+        textTransform: "none",
         backgroundColor: colors.DarkGreen,
-        height: height * 0.06,
-        marginTop: 20,
+        borderRadius: 8,
     },
     buttonText: {
         color: colors.White,

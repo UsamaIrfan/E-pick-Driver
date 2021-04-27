@@ -9,19 +9,17 @@ import {
   UPDATE_DRIVER_PROFILE,
 } from "../actionTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Toast from "react-native-simple-toast";
 import { Api } from "../server";
 import axios from "axios";
-import {startConnection} from "./SignalR"
-import {useDispatch} from "react-redux"
+import { startConnection } from "./SignalR"
+import { useDispatch } from "react-redux"
+import { showMessage, hideMessage } from "react-native-flash-message";
 
 // Demo Token Creation
 const token = "1234567890";
 
 export const LoginUser = (email, password, Token, navigation) => {
   var postData = { email: email, password: password };
-
-  const dispatcher = useDispatch()
 
   return async (dispatch) => {
     await axios
@@ -30,19 +28,22 @@ export const LoginUser = (email, password, Token, navigation) => {
       })
       .then((response) => {
         console.log(response.data);
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
           dispatch({
             type: LOGIN,
             Login: response.data,
           });
-          dispatcher(startConnection(response.data.userId))
+          // dispatch(startConnection(response.data.userId))
+          showMessage({ message: "Logged In Successfully.", type: "success" })
           navigation.navigate("MapMain");
           saveDataToStorage({ ...response.data, token: Token });
+        } else {
+          showMessage({ message: response.data.message, type: "warning" })
         }
       })
       .catch((error) => {
-        alert("error", error.response);
+        console.log("LOGIN APIS ERROR:", error.message)
+
       });
   };
 };
@@ -61,10 +62,11 @@ export const LogoutFunc = (userId, navigation) => {
         dispatch({ type: LOGOUT });
         AsyncStorage.removeItem("userData");
         navigation.navigate("Login");
-        Toast.showWithGravity("Logged Out", Toast.SHORT, Toast.BOTTOM);
+        showMessage({ message: "Logged Out.", type: "success" })
       })
       .catch((error) => {
-        console.log(error);
+        console.log("LOGIN APIS ERROR:", error.message)
+
       });
   };
 };
@@ -86,6 +88,7 @@ export const SignUpUser = (
     phoneNumber: phone,
     vehicleId: vehicleId,
   };
+  console.log(postData)
 
   return async (dispatch) => {
     await axios
@@ -94,21 +97,22 @@ export const SignUpUser = (
       })
       .then((response) => {
         console.log(response.data);
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.BOTTOM);
         if (response.data.success == true) {
           dispatch({
             type: SIGNUP,
             Login: response.data,
           });
+          showMessage({ message: "Signed Up Successfully. Please Login.", type: "success" })
           navigation.navigate("Login");
         } else {
-          // Toast.showWithGravity("Sign Up failed", Toast.SHORT, Toast.TOP);
+          showMessage({ message: response.data.message, type: "warning" })
         }
         // navigation.navigate("MapMain");
       })
       .catch((error) => {
-        Toast.showWithGravity("Login failed", Toast.SHORT, Toast.TOP);
-        alert("error", error.response);
+        showMessage({ message: "Login Failed.", type: "warning" })
+        console.log("LOGIN APIS ERROR:", error.message)
+
       });
   };
 };
@@ -130,6 +134,23 @@ export const updateProfile = (
   province,
   navigation,
 ) => {
+  console.log({
+    userId,
+    first,
+    last,
+    middle,
+    address,
+    phone,
+    insuranceNumber,
+    postalCode,
+    insuranceCompany,
+    insuranceExpiry,
+    license,
+    licenseExpiry,
+    city,
+    province,
+    navigation,
+  })
   var postData = {};
   return async (dispatch) => {
     console.log(`${Api}/api/update-client-profile?languageId=1&FirstName=${first}&MiddleName=${middle}&LastName=${last}&PhoneNumber=${phone}&Address=${address}&City=${city}&Province=${province}&userId=${userId}&PostalCode=${postalCode}&DriversLicenseNumber=${license}&DriversLicenseExpiryDate=${licenseExpiry}&InsuranceCompany=${insuranceCompany}&InsuranceNumber=${insuranceNumber}&InsuranceExpiryDate=${insuranceExpiry}&VehicleId=1`)
@@ -142,15 +163,14 @@ export const updateProfile = (
         }
       )
       .then((response) => {
-        console.log(response.data);
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
-          navigation.navigate("Login");
+          navigation.goBack();
+          showMessage({ message: response.data.message, type: "success" })
           AsyncStorage.removeItem("userData");
         }
       })
       .catch((error) => {
-        alert("error", error.response);
+        showMessage({ message: `Update Profile Api: ${error.response}`, type: "warning" });
       });
   };
 };
@@ -169,7 +189,8 @@ export const getVehicles = () => {
         });
       })
       .catch((error) => {
-        alert("error", error.response);
+        console.log("VEHICLE API ERROR: ", error.message)
+        alert("error", error.message);
       });
   };
 };
@@ -181,14 +202,15 @@ export const getUserInfo = (userId) => {
         headers: { "Content-Type": "application/json" },
       })
       .then((response) => {
-        console.log(response.data);
+        console.log("USER INFO", response.data);
         dispatch({
           type: GET_PROFILE,
           userInfo: response.data,
         });
       })
       .catch((error) => {
-        alert("error", error.response);
+        console.log("LOGIN APIS ERROR:", error.message)
+
       });
   };
 };
@@ -202,7 +224,7 @@ export const Authenticate = (resData) => {
   };
 };
 
-export const changePassword = (userId, oldPassword, newPassword) => {
+export const changePassword = (userId, oldPassword, newPassword, navigation) => {
   var postData = {
     userId: userId,
     oldPassword: oldPassword,
@@ -216,13 +238,15 @@ export const changePassword = (userId, oldPassword, newPassword) => {
       })
       .then((response) => {
         console.log(response.data);
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
         if (response.data.success == true) {
+          showMessage({ message: response.data.message, type: "success" })
           navigation.navigate("Login");
+        } else {
+          showMessage({ message: response.data.message, type: "warning" })
         }
       })
       .catch((error) => {
-        alert("error", error.response);
+        console.log("LOGIN APIS ERROR:", error.message)
       });
   };
 };
@@ -244,13 +268,13 @@ export const updateAvatar = (userId, name, type, uri) => {
       })
       .then((response) => {
         console.log(response.data);
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+        showMessage({ message: "Avatar Updated Successfully.", type: "success" })
         if (response.data.success == true) {
           console.log("success");
         }
       })
       .catch((error) => {
-        alert("error", error.response);
+        console.log("LOGIN APIS ERROR:", error.message)
       });
   };
 };
@@ -270,13 +294,14 @@ export const getForgetCode = (emailOrPhone, navigation) => {
             type: VERIFICATION_CODE,
             code: response.data.verificationCode,
           });
-          Toast.showWithGravity("Email Sent", Toast.SHORT, Toast.TOP);
+          showMessage({ message: "Email Sent.", type: "success" })
           navigation.navigate("EnterForgetCode");
         }
         // navigation.navigate("MapMain");
       })
       .catch((error) => {
-        alert("error", error.response);
+        console.log("LOGIN APIS ERROR:", error.message)
+
       });
   };
 };
@@ -291,7 +316,8 @@ export const forgetPasword = (emailOrPhone, newPassword, navigation) => {
       })
       .then((response) => {
         console.log(response.data);
-        Toast.showWithGravity(response.data.message, Toast.SHORT, Toast.TOP);
+        showMessage({ message: `Response: ${response.data.message}.`, type: "success" })
+
         if (response.data.success == true) {
           navigation.navigate("Login");
         }

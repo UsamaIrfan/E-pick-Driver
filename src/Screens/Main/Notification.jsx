@@ -1,7 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Header from "../../components/Header";
 import { MaterialCommunityIcons, MaterialIcons } from "../../Constants"
 import colors from "../../Theme/Colors";
 import Collapsible from "../../components/Collapsible";
@@ -59,9 +58,6 @@ const Notification = () => {
 
     return (
         <View>
-            <Header name={"Notifications"} icon={
-                <MaterialCommunityIcons name="bell" size={24} color={colors.White} />
-            } />
             <ScrollView style={styles.listContainer}>
                 {DATA.map((item, i) => (
                     <Collapsible item={item} key={i} />

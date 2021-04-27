@@ -1,6 +1,5 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity } from 'react-native'
-import Header from "../../components/Header";
 import { Ionicons , MaterialCommunityIcons } from "../../Constants"
 import colors from "../../Theme/Colors";
 import Fonts from "../../Theme/Fonts";
@@ -55,9 +54,6 @@ const Notification = ({ navigation }) => {
 
     return (
         <View>
-            <Header name={"Reports"} icon={
-                <MaterialCommunityIcons name="file-alert" size={24} color={colors.White} />
-            } />
             <ScrollView style={styles.listContainer}>
                 {DATA.map((item, i) => (
                     <TouchableOpacity onPress={() => navigation.navigate("DocInfo", { item })} activeOpacity={0.5} key={i} style={styles.listItem}>
@@ -75,17 +71,25 @@ export default Notification
 const styles = StyleSheet.create({
     listContainer: {
         backgroundColor: colors.BackgroundGrey,
-        height: height * 0.81
+        height: height * 0.9
     },
     listItem: {
         backgroundColor: colors.White,
         marginTop: height * 0.02,
-        borderColor: colors.DarkGrey,
-        borderWidth: 0.5,
-        marginHorizontal: width * 0.01,
-        paddingHorizontal: width * 0.02,
+        borderRadius: 8,
         paddingVertical: height * 0.02,
+        marginHorizontal: width * 0.01,
+        alignItems: "center",
         flexDirection: 'row',
-        alignItems: "center"
+        paddingHorizontal: width * 0.02,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+
+        elevation: 3,
     }
 })

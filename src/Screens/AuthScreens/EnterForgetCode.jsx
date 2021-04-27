@@ -21,7 +21,7 @@ export default function EnterForgetCode({ navigation }) {
         if (code == enteredCode) {
             navigation.navigate("ChangePasswordAuth");
         } else {
-            Toast.showWithGravity("Code Does not match", Toast.SHORT, Toast.BOTTOM);
+            showMessage({message: `Code Does not Match.`, type: "warning"})
         }
     } 
 
@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
         paddingVertical: height * 0.02,
         textTransform: "none",
         backgroundColor: colors.DarkGreen,
+        borderRadius: 8,
     },
     sepLineContainer: {
         flexDirection: "row",

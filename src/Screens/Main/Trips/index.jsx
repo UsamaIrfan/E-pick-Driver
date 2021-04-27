@@ -1,6 +1,5 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity , StatusBar } from 'react-native'
-import Header from "../../../components/Header";
 import colors from "../../../Theme/Colors";
 import { Ionicons, MaterialIcons, Octicons, Entypo, FontAwesome5 } from "../../../Constants"
 import Fonts from '../../../Theme/Fonts';
@@ -51,10 +50,6 @@ const Trips = ({ navigation }) => {
 
     return (
         <>
-            <Header
-                name={"Your Trips"}
-                icon={<FontAwesome5 name="location-arrow" size={20} color={colors.White} />}
-            />
             < TopTabNavigator />
         </>
     )

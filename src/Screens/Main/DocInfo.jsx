@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, Share, TextInput } from 'react-native'
 import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
@@ -10,6 +10,8 @@ const { height, width } = Dimensions.get("window")
 const DocInfo = ({ route, navigation }) => {
 
     const { item, image, fileType } = route.params;
+
+    console.log("DOC INFO =========>", item.path)
 
     const PdfReader = ({ url: uri }) => <WebView style={{ flex: 1 }} source={{ uri }} />
 
@@ -25,6 +27,21 @@ const DocInfo = ({ route, navigation }) => {
             //If any thing goes wrong it comes here
             .catch((errorMsg) => console.log(errorMsg));
     };
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <View style={{...styles.headerRight, marginRight: 10,}}>
+                    <TouchableOpacity activeOpacity={0.5}>
+                        <MaterialIcons name="delete" size={30} color={colors.White} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => shareMessage(item.path, item.name)} activeOpacity={0.5}>
+                        <FontAwesome5 name="share-alt" size={22} color={colors.White} />
+                    </TouchableOpacity>
+                </View>
+            )
+        });
+    }, [])
 
     const DocHeader = () => (
         <View style={styles.headerContainer}>
@@ -44,27 +61,26 @@ const DocInfo = ({ route, navigation }) => {
 
     return (
         <View style={{ backgroundColor: colors.BackgroundGrey }}>
-            <Header name={"Documents"} icon={
-                <Ionicons name="document-text-sharp" size={24} color={colors.White} />
-            } />
-            <DocHeader />
             <View style={styles.scrollView}>
                 <View>
                     <View style={styles.labelInput}>
                         <Text style={styles.inputTitle}>Name</Text>
-                        <Text style={styles.docDetails} >{item.name}</Text>
+                        <Text style={styles.docDetails} numberOfLines={1} >{item.name}</Text>
                     </View>
                     <View style={styles.labelInput}>
                         <Text style={styles.inputTitle}>File Type</Text>
                         <Text style={styles.docDetails}>{item.documentTypeId}</Text>
                     </View>
                     {image ? <View style={styles.imageContainer}>
-                        <Image style={{ ...StyleSheet.absoluteFill, ...styles.docImage }} source={{ uri: item?.path }} />
+                        <Image style={{ ...StyleSheet.absoluteFill, ...styles.docImage }} source={{ uri: item.path }} />
                     </View> :
                         <View style={styles.imageContainer}>
-                            <Text style={{ fontSize: 45 ,backgroundColor: colors.LightGrey2, color: colors.DarkGrey, flex: 1, textAlignVertical: "center", textAlign: "center" }}>{fileType}</Text>
+                            <Text style={{ fontSize: 45, backgroundColor: colors.LightGrey2, textTransform: "uppercase", color: colors.DarkGrey, flex: 1, textAlignVertical: "center", textAlign: "center" }}>{fileType}</Text>
                         </View>
                     }
+                    {/* <View style={styles.imageContainer}>
+                        <Image style={{ ...StyleSheet.absoluteFill, ...styles.docImage }} source={{ uri: item.path }} />
+                    </View> */}
                 </View>
             </View>
         </View>
@@ -88,7 +104,7 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         backgroundColor: colors.BackgroundGrey,
-        height: height * 0.81,
+        height: height * 0.9,
         paddingHorizontal: width * 0.04,
     },
     headerContainer: {
@@ -152,7 +168,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2,
         borderColor: colors.DarkGreen,
         alignItems: "center",
-        marginVertical: height * 0.02,
+        marginVertical: height * 0.03,
     },
     docDetails: {
         fontSize: width * 0.04,
