@@ -21,7 +21,6 @@ const Documents = (props) => {
     const dispatch = useDispatch()
 
     const item = props.route.params
-    console.log("Item ==>", item.name, item.document, item.isImage)
 
     const [Document, setDocument] = useState(item.document);
     const [DocType, setDocType] = useState(null);
@@ -120,7 +119,7 @@ const Documents = (props) => {
             // console.log(binaryURI)
             // console.log(`base64,${base64.encode(binaryURI)}`)
             console.log(userId, DocName, Document.type, Doc64URI, DocType)
-            await dispatch(addCustomerDocument(userId, DocName, Document.type, Doc64URI, parseInt(DocType.value), props.navigation))
+            await dispatch(addCustomerDocument(userId, DocName, Document.type, Doc64URI, parseInt(DocType.id), props.navigation))
             setIsLoading(false)
         }
     }

@@ -239,7 +239,7 @@ export const changePassword = (userId, oldPassword, newPassword, navigation) => 
       .then((response) => {
         console.log(response.data);
         if (response.data.success == true) {
-          showMessage({ message: response.data.message, type: "success" })
+          showMessage({ message: response.data.message, type: "success" , icon: { icon: "auto", position: "left" },})
           navigation.navigate("Login");
         } else {
           showMessage({ message: response.data.message, type: "warning" })

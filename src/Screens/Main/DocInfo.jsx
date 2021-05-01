@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, Text, View, Image, Dimensions, TouchableOpacity, Share, TextInput } from 'react-native'
 import Header from "../../components/Header";
 import colors from "../../Theme/Colors";
-import { Ionicons, MaterialIcons, Entypo, FontAwesome5 } from "../../Constants"
+import { MaterialIcons, FontAwesome5 } from "../../Constants"
 import Fonts from '../../Theme/Fonts';
 
 const { height, width } = Dimensions.get("window")
@@ -31,7 +31,7 @@ const DocInfo = ({ route, navigation }) => {
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
-                <View style={{...styles.headerRight, marginRight: 10,}}>
+                <View style={{ ...styles.headerRight, marginRight: 10, }}>
                     <TouchableOpacity activeOpacity={0.5}>
                         <MaterialIcons name="delete" size={30} color={colors.White} />
                     </TouchableOpacity>

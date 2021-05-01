@@ -67,9 +67,12 @@ export const addCustomerDocument = (userId, filename, docType, uri, docTypeId, n
         headers: { "Content-Type": "application/json" },
       })
       .then((response) => {
-        console.log("Response ==>", response.data);
-        showMessage({message: "Document Uploaded", type: "success"})
-        navigation.goBack()
+        if (response.data.success == true) {
+          showMessage({message: "Document Uploaded.", type: "success", icon: {icon: "auto", position: "left"}})
+          navigation.goBack()
+        } else {
+          showMessage({message: response.data.message, type: "warning", icon: {icon: "auto", position: "left"}})
+        }
       })
       .catch((error) => {
         console.log("DOCUMENTS API ERROR", error.message)

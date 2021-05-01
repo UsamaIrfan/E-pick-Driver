@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ScrollView, Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native'
 import Loader from "../../components/Loader";
-import { avatar } from "../../Constants"
+import { avatar, FontAwesome } from "../../Constants"
 import colors from "../../Theme/Colors";
 import { Avatar, TouchableRipple } from "react-native-paper"
 import { useSelector, useDispatch } from "react-redux";
@@ -31,6 +31,16 @@ const Profile = ({ route, navigation }) => {
     const _input5 = useRef()
     const _input6 = useRef()
     const _input7 = useRef()
+    
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity activeOpacity={0.5} style={{ marginRight: 10, }} onPress={() => navigation.navigate("MapMain", {screen: "Notification"})}>
+                    <FontAwesome name="bell" color={colors.White} size={24} />
+                </TouchableOpacity>
+            )
+        });
+    }, [])
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {

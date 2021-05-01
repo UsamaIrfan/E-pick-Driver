@@ -88,12 +88,12 @@ const Home = ({ navigation }) => {
             }
 
             _map.current.animateToRegion(region, 2000)
-            setMaxZoomLevel(10)
+            setMaxZoomLevel(20)
             console.log(Region)
 
         } catch (error) {
             const errorMessage = error.message.toString()
-            setMaxZoomLevel(10)
+            setMaxZoomLevel(20)
             setErrorMsg(errorMessage)
             Toast.showWithGravity(errorMessage, Toast.SHORT, Toast.BOTTOM);
         }
@@ -112,21 +112,98 @@ const Home = ({ navigation }) => {
 
     const GooglePlacesInput = (props) => {
         return (
+            // <GooglePlacesAutocomplete
+            //     placeholder={props.placeholder}
+            //     minLength={2}
+            //     renderLeftButton={() => {
+            //         if (props.placeholder == "From") {
+            //             return <Ionicons style={styles.icon} name="car-sport" size={24} color={colors.DarkGreen} />
+            //         } else {
+            //             return <Entypo style={styles.icon} name="location-pin" size={24} color={colors.DarkGreen} />
+            //         }
+            //     }
+            //     }
+            //     filterReverseGeocodingByTypes={["locality"]}
+            //     keyboardKeyType={"search"}
+            //     fetchDetails={true}
+
+            //     onPress={(data, details = null) => {
+            //         if (props.from == true) {
+            //             setRegion({ latitude: details?.geometry.location.lat, longitude: details?.geometry.location.lng, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta });
+            //             setfrom(data.description)
+            //             _map.current.animateToRegion({ latitude: details?.geometry.location.lat, longitude: details?.geometry.location.lng, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta }, 2000)
+            //             setPickUpPoint({ details: details, data: data, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta })
+            //         }
+            //         if (props.to == true) {
+            //             if (!PickUpPoint) {
+            //                 Toast.showWithGravity("Please provide Pick Up location", Toast.SHORT, Toast.BOTTOM)
+            //             } else {
+            //                 setTo(data.description)
+            //                 _map.current.animateToRegion({ latitude: details?.geometry.location.lat, longitude: details?.geometry.location.lng, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta }, 2000)
+            //                 setTrip(PickUpPoint, { details: details, data: data, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta })
+            //                 setSetTripObject(PickUpPoint, { details: details, data: data, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta })
+            //             }
+            //         }
+            //     }}
+            //     query={{
+            //         key: "AIzaSyDCSylBlVpWKjftAulQ0jvQbVCslBxxtXk",
+            //         // key: 'AIzaSyA57hpVEb2LvG3MSGxXSShEQKIovSZ4yZY', Max
+            //         // key: "AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM", Contel
+            //         language: 'en',
+
+            //         types: "",
+            //         components: "country: pk"
+            //     }}
+            //     enablePoweredByContainer={false}
+            //     styles={{
+            //         textInputContainer: {
+            //             marginTop: 0,
+            //             marginBottom: 0,
+            //             marginLeft: 0,
+            //             marginRight: 0,
+            //         },
+            //         container: {
+            //             marginTop: 0,
+            //             marginBottom: 0,
+            //             marginLeft: 0,
+            //             marginRight: 0,
+            //         },
+            //         row: {
+            //             borderBottomColor: "#ccc",
+            //             borderBottomWidth: .5,
+            //         },
+            //         description: {
+            //             fontFamily: Fonts.reg,
+            //         },
+
+            //     }}
+            //     GooglePlacesSearchQuery={{
+            //         rankby: "distance",
+            //         components: "country: us"
+            //     }}
+            //     GooglePlacesDetailsQuery={{
+            //         fields: ["formatted_address", "geometry"]
+            //     }}
+            //     renderDescription={row => row.description}
+            //     currentLocation={true}
+            //     currentLocationLabel="Current location"
+            //     nearbyPlacesAPI="GooglePlacesSearch"
+            //     predefinedPlaces={[HomePlace, HomeCheck]}
+            //     debounce={200}
+            //     google
+            // />
             <GooglePlacesAutocomplete
                 placeholder={props.placeholder}
                 minLength={2}
                 renderLeftButton={() => {
-                    if (props.placeholder == "From") {
+                    if (props.from) {
                         return <Ionicons style={styles.icon} name="car-sport" size={24} color={colors.DarkGreen} />
                     } else {
                         return <Entypo style={styles.icon} name="location-pin" size={24} color={colors.DarkGreen} />
                     }
-                }
-                }
-                filterReverseGeocodingByTypes={["locality"]}
+                }}
                 keyboardKeyType={"search"}
                 fetchDetails={true}
-
                 onPress={(data, details = null) => {
                     if (props.from == true) {
                         setRegion({ latitude: details?.geometry.location.lat, longitude: details?.geometry.location.lng, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta });
@@ -136,7 +213,7 @@ const Home = ({ navigation }) => {
                     }
                     if (props.to == true) {
                         if (!PickUpPoint) {
-                            Toast.showWithGravity("Please provide Pick Up location", Toast.SHORT, Toast.BOTTOM)
+                            showMessage({ message: "Please provide pick up location.", type: "info" });
                         } else {
                             setTo(data.description)
                             _map.current.animateToRegion({ latitude: details?.geometry.location.lat, longitude: details?.geometry.location.lng, longitudeDelta: longitudeDelta, latitudeDelta: latitudeDelta }, 2000)
@@ -146,13 +223,14 @@ const Home = ({ navigation }) => {
                     }
                 }}
                 query={{
+                    // Add a "M" at the end to get the API working
+
                     key: "AIzaSyDCSylBlVpWKjftAulQ0jvQbVCslBxxtXk",
                     // key: 'AIzaSyA57hpVEb2LvG3MSGxXSShEQKIovSZ4yZY', Max
                     // key: "AIzaSyC-MPat5umkTuxfvfqe1FN1ZMSafBpPcpM", Contel
                     language: 'en',
-
+                    country: "us",
                     types: "",
-                    components: "country: pk"
                 }}
                 enablePoweredByContainer={false}
                 styles={{
@@ -171,6 +249,7 @@ const Home = ({ navigation }) => {
                     row: {
                         borderBottomColor: "#ccc",
                         borderBottomWidth: .5,
+                        // width: width * 0.8,
                     },
                     description: {
                         fontFamily: Fonts.reg,
@@ -179,11 +258,17 @@ const Home = ({ navigation }) => {
                 }}
                 GooglePlacesSearchQuery={{
                     rankby: "distance",
-                    components: "country: us"
+                    components: "country: us",
+                    location: "new York",
+                    strictbounds: true,
                 }}
                 GooglePlacesDetailsQuery={{
                     fields: ["formatted_address", "geometry"]
                 }}
+                GoogleReverseGeocodingQuery={{
+                    components: "country: us",
+                }}
+
                 renderDescription={row => row.description}
                 currentLocation={true}
                 currentLocationLabel="Current location"
@@ -220,7 +305,7 @@ const Home = ({ navigation }) => {
                                         setRideConfirmed(false)
                                         setPickConfirmed(false)
                                     }}>
-                                        <View style={{ justifyContent: "flex-end", flexDirection: "row", justifyContent: "center", padding: 10, width: width * 0.8, backgroundColor: colors.Red }}>
+                                        <View style={{ justifyContent: "flex-end", flexDirection: "row", justifyContent: "center", padding: 10, width: width * 0.8, borderRadius: 5,backgroundColor: colors.Red }}>
                                             <Text style={{ fontFamily: Fonts.reg, color: "#fff", fontSize: 15, }}>Cancel</Text>
                                         </View>
                                     </TouchableRipple>
@@ -407,6 +492,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.DarkGreen,
         width: width * 0.8,
         zIndex: 10,
+        borderRadius: 5,
     },
     bookNowButton: {
         justifyContent: "center",
@@ -418,6 +504,7 @@ const styles = StyleSheet.create({
         textTransform: "none",
         backgroundColor: colors.DarkGreen,
         zIndex: 10,
+        borderRadius: 5,
     },
     bottomMapOptions: {
         position: "absolute",
@@ -433,6 +520,7 @@ const styles = StyleSheet.create({
         padding: height * 0.015,
         width: width * 0.8,
         zIndex: 10,
+        borderRadius: 5
     },
     pickConfirmedText: {
         fontFamily: Fonts.reg,
@@ -445,6 +533,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 10,
         zIndex: 10,
+        borderRadius: 5,
     },
 })
 

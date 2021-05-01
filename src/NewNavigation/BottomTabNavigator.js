@@ -100,16 +100,31 @@ const BottomTabNavigator = ({ navigation }) => {
           ),
         }}
       />
-      <Tab.Screen
+
+<Tab.Screen
         name="Map "
         component={HomeScreen}
         options={{
-          tabBarButton: (props) => {
+          tabBarIcon: (props) => {
             return (
-              <View style={{ flex: 1, alignItems: "center" }}>
+              <TouchableOpacity
+                style={{
+                  height: "100%",
+                  width: "100%",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                activeOpacity={1}
+                onPress={(e) => {
+                  e.preventDefault();
+                  if (Booking.active) {
+                    navigation.navigate("Map")
+                  }
+                }}
+              >
                 <TouchableOpacity
                   style={{
-                    top: -(width * 0.2) / 2,
+                    top: -(width * 0.2) / 2.7,
                     justifyContent: "center",
                     alignItems: "center",
                     width: 65,
@@ -118,7 +133,9 @@ const BottomTabNavigator = ({ navigation }) => {
                     overflow: "hidden",
                     backgroundColor: colors.DarkGreen,
                   }}
-                  onPress={props.onPress}
+                  onPress={() => {
+                    navigation.navigate("Map")
+                  }}
                 >
                   <FontAwesome
                     name="location-arrow"
@@ -127,7 +144,7 @@ const BottomTabNavigator = ({ navigation }) => {
                     size={35}
                   />
                 </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
             );
           },
           tabBarLabel: "",
